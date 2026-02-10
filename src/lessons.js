@@ -1,4 +1,4 @@
-export const totalLessons = 8;
+export const totalLessons = 9;
 
 export const lessons = {
   1: {
@@ -110,7 +110,7 @@ export const lessons = {
           {
             title: "Run git push",
             commandIncludes: "git push",
-            outputIncludes: "main -> main"
+            outputIncludes: "origin/main"
           }
         ],
         hint: "Type 'git push'"
@@ -191,6 +191,33 @@ export const lessons = {
           }
         ],
         hint: "Try: git rebase main"
+      }
+    ]
+  }
+  ,
+  9: {
+    title: "Local vs Remote (origin)",
+    subLessons: [
+      {
+        title: "Understand origin/main",
+        description: `
+                    <p>Git usually has a <em>local</em> branch (like <code>main</code>) and a <em>remote-tracking</em> branch (like <code>origin/main</code>).</p>
+                    <p>Your local branch moves forward when you commit. The remote-tracking branch only moves when you <code>git push</code> or <code>git pull</code>.</p>
+                    <p>Check the Timeline panel to see both lanes.</p>
+                `,
+        objectives: [
+          {
+            title: "List remotes",
+            commandIncludes: "git remote -v",
+            outputIncludes: "origin"
+          },
+          {
+            title: "Push so origin/main updates",
+            commandIncludes: "git push",
+            outputIncludes: "origin/main"
+          }
+        ],
+        hint: "Try: git remote -v then git push"
       }
     ]
   }

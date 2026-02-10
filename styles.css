@@ -200,6 +200,16 @@ body {
     z-index: 3;
 }
 
+.timeline-remote {
+    position: absolute;
+    top: -8px;
+    font-size: 0.65rem;
+    color: #805ad5;
+    font-weight: 800;
+    z-index: 3;
+    letter-spacing: 0.02em;
+}
+
 .sidebar {
     width: 250px;
     background: rgba(255, 255, 255, 0.95);

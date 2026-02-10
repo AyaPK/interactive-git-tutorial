@@ -138,15 +138,36 @@ function renderTimeline(gitState) {
   rowsEl.classList.add("active");
 
   const headByBranch = gitState.branchHeads || {};
+  const remoteHeadByBranch = gitState.remoteBranchHeads || {};
   const maxSlots = commits.length;
+
+  const commitsByHash = new Map(commits.map((c) => [c.hash, c]));
+
+  const getReachableSet = (headHash) => {
+    const reachable = new Set();
+    const stack = headHash ? [headHash] : [];
+    while (stack.length) {
+      const h = stack.pop();
+      if (!h || reachable.has(h)) continue;
+      reachable.add(h);
+      const c = commitsByHash.get(h);
+      if (!c?.parents?.length) continue;
+      for (const p of c.parents) stack.push(p);
+    }
+    return reachable;
+  };
 
   const html = branches
     .map((branch) => {
       const isCurrent = branch === gitState.currentBranch;
 
+      const headHash = headByBranch?.[branch] ?? null;
+      const remoteHash = remoteHeadByBranch?.[`origin/${branch}`] ?? null;
+      const reachable = getReachableSet(headHash);
+
       const commitIndexes = commits
         .map((c, idx) => ({ c, idx }))
-        .filter(({ c }) => c.branch === branch)
+        .filter(({ c }) => reachable.has(c.hash))
         .map(({ idx }) => idx);
 
       const firstIdx = commitIndexes.length ? Math.min(...commitIndexes) : null;
@@ -154,18 +175,20 @@ function renderTimeline(gitState) {
 
       const track = commits
         .map((c, idx) => {
-          const isOnBranch = c.branch === branch;
-          if (!isOnBranch) {
+          const isOnRef = reachable.has(c.hash);
+          if (!isOnRef) {
             const connected = firstIdx !== null && lastIdx !== null && idx >= firstIdx && idx <= lastIdx;
             return `<div class="timeline-slot" data-idx="${idx}">${connected ? '<div class="timeline-line"></div>' : ""}</div>`;
           }
-          const isHead = headByBranch?.[branch] === c.hash;
+          const isHead = headHash === c.hash;
+          const isRemoteHead = remoteHash && remoteHash === c.hash;
           const dotClass = c.type === "merge" ? "timeline-dot merge" : "timeline-dot";
           const headLabel = isHead ? `<div class="timeline-head">${isCurrent ? "HEAD" : ""}</div>` : "";
+          const remoteLabel = isRemoteHead ? '<div class="timeline-remote">REMOTE</div>' : "";
           const title = `${c.hash} — ${c.message}`;
           const connected = firstIdx !== null && lastIdx !== null && idx >= firstIdx && idx <= lastIdx;
           const line = connected ? '<div class="timeline-line"></div>' : "";
-          return `<div class="timeline-slot" data-idx="${idx}" title="${escapeHtml(title)}">${line}${headLabel}<div class="${dotClass}"></div></div>`;
+          return `<div class="timeline-slot" data-idx="${idx}" title="${escapeHtml(title)}">${line}${headLabel}${remoteLabel}<div class="${dotClass}"></div></div>`;
         })
         .slice(0, maxSlots)
         .join("");

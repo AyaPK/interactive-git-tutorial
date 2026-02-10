@@ -7,6 +7,9 @@ export function createInitialGitState() {
     currentBranch: "main",
     branches: ["main"],
     branchHeads: { main: null },
+    remotes: ["origin"],
+    remoteBranches: ["origin/main"],
+    remoteBranchHeads: { "origin/main": null },
     remoteConnected: false
   };
 }

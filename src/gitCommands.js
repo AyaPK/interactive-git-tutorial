@@ -51,6 +51,19 @@ export function getGitStatus(gitState) {
   return output;
 }
 
+function ensureRemoteBranch(gitState, remoteName, branchName) {
+  if (!gitState.remoteBranches) gitState.remoteBranches = [];
+  if (!gitState.remoteBranchHeads) gitState.remoteBranchHeads = {};
+  const ref = `${remoteName}/${branchName}`;
+  if (!gitState.remoteBranches.includes(ref)) {
+    gitState.remoteBranches.push(ref);
+  }
+  if (!(ref in gitState.remoteBranchHeads)) {
+    gitState.remoteBranchHeads[ref] = null;
+  }
+  return ref;
+}
+
 function handleGitAdd(gitState, args) {
   if (args.length === 0) {
     return "Nothing specified, nothing added.";
@@ -192,6 +205,8 @@ export function handleGitCommand(gitState, subcommand, args) {
         gitState.initialized = true;
         if (!gitState.branches) gitState.branches = [gitState.currentBranch];
         if (!gitState.branchHeads) gitState.branchHeads = { [gitState.currentBranch]: null };
+        if (!gitState.remotes) gitState.remotes = ["origin"];
+        ensureRemoteBranch(gitState, "origin", gitState.currentBranch);
         output = "Initialized empty Git repository in /tutorial/.git/";
       }
       success = true;
@@ -231,8 +246,13 @@ export function handleGitCommand(gitState, subcommand, args) {
           success = true;
           break;
         }
+        const remoteRef = ensureRemoteBranch(gitState, "origin", gitState.currentBranch);
+        const localHead = gitState.branchHeads?.[gitState.currentBranch] ?? null;
+        if (localHead) {
+          gitState.remoteBranchHeads[remoteRef] = localHead;
+        }
         output =
-          "Enumerating objects: 5, done.\nCounting objects: 100% (5/5), done.\nWriting objects: 100% (3/3), done.\nTotal 3 (delta 0), reused 0 (delta 0)\nTo https://github.com/tutorial/repo.git\n   abc1234..def5678  main -> main";
+          "Enumerating objects: 5, done.\nCounting objects: 100% (5/5), done.\nWriting objects: 100% (3/3), done.\nTotal 3 (delta 0), reused 0 (delta 0)\nTo https://github.com/tutorial/repo.git\n   abc1234..def5678  main -> origin/main";
         success = true;
       }
       break;
@@ -241,6 +261,11 @@ export function handleGitCommand(gitState, subcommand, args) {
       if (!gitState.initialized) {
         output = "fatal: not a git repository (or any of the parent directories): .git";
       } else {
+        const remoteRef = ensureRemoteBranch(gitState, "origin", gitState.currentBranch);
+        const remoteHead = gitState.remoteBranchHeads?.[remoteRef] ?? null;
+        if (remoteHead) {
+          gitState.branchHeads[gitState.currentBranch] = remoteHead;
+        }
         output =
           "remote: Counting objects: 5, done.\nremote: Compressing objects: 100% (3/3), done.\nremote: Total 5 (delta 2), reused 5 (delta 2)\nUnpacking objects: 100% (5/5), done.\nFrom https://github.com/tutorial/repo.git\n   abc1234..def5678  main     -> origin/main\nUpdating abc1234..def5678\nFast-forward";
         success = true;
@@ -270,7 +295,13 @@ export function handleGitCommand(gitState, subcommand, args) {
     case "remote":
       if (args[0] === "add" && args[1] === "origin") {
         gitState.remoteConnected = true;
+        if (!gitState.remotes) gitState.remotes = ["origin"];
+        ensureRemoteBranch(gitState, "origin", gitState.currentBranch);
         output = "Remote repository added successfully.";
+        success = true;
+      } else if (args[0] === "-v") {
+        output =
+          "origin  https://github.com/tutorial/repo.git (fetch)\norigin  https://github.com/tutorial/repo.git (push)";
         success = true;
       } else {
         output = "Usage: git remote add origin <url>";
