@@ -96,11 +96,17 @@ function handleGitCommit(gitState, args) {
     message,
     author: "Tutorial User",
     files: [...gitState.stagedFiles],
-    timestamp: new Date().toLocaleString()
+    timestamp: new Date().toLocaleString(),
+    branch: gitState.currentBranch,
+    parents: gitState.branchHeads?.[gitState.currentBranch]
+      ? [gitState.branchHeads[gitState.currentBranch]]
+      : []
   };
 
   gitState.commits.push(commit);
   gitState.stagedFiles = [];
+  if (!gitState.branchHeads) gitState.branchHeads = {};
+  gitState.branchHeads[gitState.currentBranch] = commit.hash;
 
   return `[${commit.hash}] ${message}\n ${gitState.commits.length} file(s) changed`;
 }
@@ -111,6 +117,13 @@ function handleGitBranch(gitState, args) {
   }
 
   const branchName = args[0];
+  if (!gitState.branches) gitState.branches = [gitState.currentBranch];
+  if (!gitState.branchHeads) gitState.branchHeads = { [gitState.currentBranch]: null };
+  if (gitState.branches.includes(branchName)) {
+    return `Branch '${branchName}' already exists`;
+  }
+  gitState.branches.push(branchName);
+  gitState.branchHeads[branchName] = gitState.branchHeads[gitState.currentBranch] ?? null;
   return `Created branch '${branchName}'`;
 }
 
@@ -120,6 +133,12 @@ function handleGitCheckout(gitState, args) {
   }
 
   const branchName = args[0];
+  if (!gitState.branches) gitState.branches = [gitState.currentBranch];
+  if (!gitState.branchHeads) gitState.branchHeads = { [gitState.currentBranch]: null };
+  if (!gitState.branches.includes(branchName)) {
+    gitState.branches.push(branchName);
+    gitState.branchHeads[branchName] = gitState.branchHeads[gitState.currentBranch] ?? null;
+  }
   gitState.currentBranch = branchName;
   return `Switched to branch '${branchName}'`;
 }
@@ -130,6 +149,25 @@ function handleGitMerge(gitState, args) {
   }
 
   const branchName = args[0];
+  if (!gitState.branches) gitState.branches = [gitState.currentBranch];
+  if (!gitState.branchHeads) gitState.branchHeads = { [gitState.currentBranch]: null };
+  if (!gitState.branches.includes(branchName)) {
+    return `merge: '${branchName}' - not something we can merge`;
+  }
+  const currentHead = gitState.branchHeads[gitState.currentBranch] ?? null;
+  const otherHead = gitState.branchHeads[branchName] ?? null;
+  const commit = {
+    hash: generateCommitHash(),
+    message: `Merge branch '${branchName}' into ${gitState.currentBranch}`,
+    author: "Tutorial User",
+    files: [],
+    timestamp: new Date().toLocaleString(),
+    branch: gitState.currentBranch,
+    type: "merge",
+    parents: [currentHead, otherHead].filter(Boolean)
+  };
+  gitState.commits.push(commit);
+  gitState.branchHeads[gitState.currentBranch] = commit.hash;
   return `Merge branch '${branchName}' into ${gitState.currentBranch}\n\nAuto-merging files\nMerge completed successfully`;
 }
 
@@ -152,6 +190,8 @@ export function handleGitCommand(gitState, subcommand, args) {
         output = "Initialized Git repository already exists.";
       } else {
         gitState.initialized = true;
+        if (!gitState.branches) gitState.branches = [gitState.currentBranch];
+        if (!gitState.branchHeads) gitState.branchHeads = { [gitState.currentBranch]: null };
         output = "Initialized empty Git repository in /tutorial/.git/";
       }
       success = true;

@@ -70,6 +70,136 @@ body {
     width: 100%;
 }
 
+.timeline-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    margin: 0 1rem 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.25rem;
+    max-width: 1400px;
+    width: calc(100% - 2rem);
+    align-self: center;
+}
+
+.timeline-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.timeline-header h3 {
+    color: #2d3748;
+    font-size: 1.05rem;
+}
+
+.timeline-subtitle {
+    color: #718096;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.timeline-body {
+    position: relative;
+}
+
+.timeline-empty {
+    color: #a0aec0;
+    font-style: italic;
+    font-size: 0.9rem;
+    padding: 0.75rem 0;
+}
+
+.timeline-rows {
+    display: none;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+
+.timeline-rows.active {
+    display: block;
+}
+
+.timeline-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.35rem 0;
+}
+
+.timeline-branch {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: #2d3748;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.timeline-branch-badge {
+    background: #edf2f7;
+    color: #2d3748;
+    border-radius: 999px;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.timeline-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 28px;
+}
+
+.timeline-slot {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.timeline-line {
+    position: absolute;
+    left: -6px;
+    right: -6px;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: rgba(74, 85, 104, 0.25);
+    border-radius: 2px;
+    z-index: 1;
+}
+
+.timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.18);
+    position: relative;
+    z-index: 2;
+}
+
+.timeline-dot.merge {
+    background: #48bb78;
+    box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.18);
+}
+
+.timeline-head {
+    position: absolute;
+    top: -8px;
+    font-size: 0.7rem;
+    color: #4a5568;
+    font-weight: 700;
+    z-index: 3;
+}
+
 .sidebar {
     width: 250px;
     background: rgba(255, 255, 255, 0.95);

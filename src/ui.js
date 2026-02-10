@@ -115,4 +115,74 @@ export function updateVisualPanel(gitState) {
   } else {
     commits.innerHTML = '<div class="empty-state">No commits yet</div>';
   }
+
+  renderTimeline(gitState);
+}
+
+function renderTimeline(gitState) {
+  const rowsEl = document.getElementById("timelineRows");
+  const emptyEl = document.getElementById("timelineEmpty");
+  if (!rowsEl || !emptyEl) return;
+
+  const branches = gitState.branches?.length ? gitState.branches : [gitState.currentBranch];
+  const commits = Array.isArray(gitState.commits) ? gitState.commits : [];
+
+  if (commits.length === 0) {
+    emptyEl.style.display = "block";
+    rowsEl.classList.remove("active");
+    rowsEl.innerHTML = "";
+    return;
+  }
+
+  emptyEl.style.display = "none";
+  rowsEl.classList.add("active");
+
+  const headByBranch = gitState.branchHeads || {};
+  const maxSlots = commits.length;
+
+  const html = branches
+    .map((branch) => {
+      const isCurrent = branch === gitState.currentBranch;
+
+      const commitIndexes = commits
+        .map((c, idx) => ({ c, idx }))
+        .filter(({ c }) => c.branch === branch)
+        .map(({ idx }) => idx);
+
+      const firstIdx = commitIndexes.length ? Math.min(...commitIndexes) : null;
+      const lastIdx = commitIndexes.length ? Math.max(...commitIndexes) : null;
+
+      const track = commits
+        .map((c, idx) => {
+          const isOnBranch = c.branch === branch;
+          if (!isOnBranch) {
+            const connected = firstIdx !== null && lastIdx !== null && idx >= firstIdx && idx <= lastIdx;
+            return `<div class="timeline-slot" data-idx="${idx}">${connected ? '<div class="timeline-line"></div>' : ""}</div>`;
+          }
+          const isHead = headByBranch?.[branch] === c.hash;
+          const dotClass = c.type === "merge" ? "timeline-dot merge" : "timeline-dot";
+          const headLabel = isHead ? `<div class="timeline-head">${isCurrent ? "HEAD" : ""}</div>` : "";
+          const title = `${c.hash} — ${c.message}`;
+          const connected = firstIdx !== null && lastIdx !== null && idx >= firstIdx && idx <= lastIdx;
+          const line = connected ? '<div class="timeline-line"></div>' : "";
+          return `<div class="timeline-slot" data-idx="${idx}" title="${escapeHtml(title)}">${line}${headLabel}<div class="${dotClass}"></div></div>`;
+        })
+        .slice(0, maxSlots)
+        .join("");
+
+      const badge = isCurrent ? `<span class="timeline-branch-badge">current</span>` : "";
+      return `<div class="timeline-row"><div class="timeline-branch">${escapeHtml(branch)}${badge}</div><div class="timeline-track">${track}</div></div>`;
+    })
+    .join("");
+
+  rowsEl.innerHTML = html;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }

@@ -5,6 +5,8 @@ export function createInitialGitState() {
     stagedFiles: [],
     commits: [],
     currentBranch: "main",
+    branches: ["main"],
+    branchHeads: { main: null },
     remoteConnected: false
   };
 }
