@@ -24,6 +24,79 @@ export class GitTutorial {
     this.init();
   }
 
+  fileExists(name) {
+    return (
+      this.gitState.workingDirectory.includes(name) ||
+      this.gitState.stagedFiles.includes(name) ||
+      this.gitState.commits.some((c) => c.files?.includes?.(name))
+    );
+  }
+
+  touchFile(name) {
+    if (!name) {
+      return { output: "touch: missing file operand", success: false };
+    }
+
+    if (this.fileExists(name)) {
+      return { output: `touch: '${name}' already exists`, success: false };
+    }
+
+    this.gitState.workingDirectory.push(name);
+    return { output: `Created file '${name}'`, success: true };
+  }
+
+  renameFile(oldName, newName) {
+    if (!oldName || !newName) {
+      return { output: "mv: usage: mv <old> <new>", success: false };
+    }
+
+    if (!this.fileExists(oldName)) {
+      return { output: `mv: cannot stat '${oldName}': No such file`, success: false };
+    }
+
+    if (this.fileExists(newName)) {
+      return { output: `mv: cannot move '${oldName}' to '${newName}': File exists`, success: false };
+    }
+
+    const wdIdx = this.gitState.workingDirectory.indexOf(oldName);
+    if (wdIdx !== -1) {
+      this.gitState.workingDirectory[wdIdx] = newName;
+    }
+
+    const stIdx = this.gitState.stagedFiles.indexOf(oldName);
+    if (stIdx !== -1) {
+      this.gitState.stagedFiles[stIdx] = newName;
+    }
+
+    return { output: `Renamed '${oldName}' to '${newName}'`, success: true };
+  }
+
+  deleteFile(name) {
+    if (!name) {
+      return { output: "rm: missing file operand", success: false };
+    }
+
+    const inWd = this.gitState.workingDirectory.includes(name);
+    const inStage = this.gitState.stagedFiles.includes(name);
+
+    if (!inWd && !inStage) {
+      return { output: `rm: cannot remove '${name}': No such file`, success: false };
+    }
+
+    this.gitState.workingDirectory = this.gitState.workingDirectory.filter((f) => f !== name);
+    this.gitState.stagedFiles = this.gitState.stagedFiles.filter((f) => f !== name);
+    return { output: `Deleted file '${name}'`, success: true };
+  }
+
+  listFiles() {
+    const files = [...this.gitState.workingDirectory, ...this.gitState.stagedFiles];
+    const unique = Array.from(new Set(files));
+    if (unique.length === 0) {
+      return { output: "(no files)", success: true };
+    }
+    return { output: unique.join("\n"), success: true };
+  }
+
   init() {
     this.setupEventListeners();
     this.loadLesson(1, 0);
@@ -36,6 +109,24 @@ export class GitTutorial {
     const closeHelp = document.getElementById("closeHelp");
     const helpModal = document.getElementById("helpModal");
     const lessonItems = document.querySelectorAll(".lesson-item");
+    const createFileBtn = document.getElementById("createFileBtn");
+    const createFileModal = document.getElementById("createFileModal");
+    const closeCreateFile = document.getElementById("closeCreateFile");
+    const cancelCreateFile = document.getElementById("cancelCreateFile");
+    const confirmCreateFile = document.getElementById("confirmCreateFile");
+    const createFileName = document.getElementById("createFileName");
+    const workingFiles = document.getElementById("workingFiles");
+    const renameFileModal = document.getElementById("renameFileModal");
+    const closeRenameFile = document.getElementById("closeRenameFile");
+    const cancelRenameFile = document.getElementById("cancelRenameFile");
+    const confirmRenameFile = document.getElementById("confirmRenameFile");
+    const renameFileOld = document.getElementById("renameFileOld");
+    const renameFileNew = document.getElementById("renameFileNew");
+    const deleteFileModal = document.getElementById("deleteFileModal");
+    const closeDeleteFile = document.getElementById("closeDeleteFile");
+    const cancelDeleteFile = document.getElementById("cancelDeleteFile");
+    const confirmDeleteFile = document.getElementById("confirmDeleteFile");
+    const deleteFileName = document.getElementById("deleteFileName");
 
     terminalInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
@@ -58,6 +149,90 @@ export class GitTutorial {
       }
     });
 
+    const openCreateFileModal = () => {
+      if (!createFileModal) return;
+      createFileModal.classList.add("active");
+      if (createFileName) {
+        createFileName.value = "";
+        createFileName.focus();
+      }
+    };
+
+    const openDeleteFileModal = (file) => {
+      if (!deleteFileModal || !deleteFileName) return;
+      deleteFileName.value = file;
+      deleteFileModal.classList.add("active");
+    };
+
+    const closeDeleteFileModal = () => {
+      if (!deleteFileModal) return;
+      deleteFileModal.classList.remove("active");
+    };
+
+    const submitDeleteFile = () => {
+      if (!deleteFileName) return;
+      const file = deleteFileName.value.trim();
+      if (!file) return;
+
+      closeDeleteFileModal();
+
+      const cmd = `rm ${file}`;
+      addTerminalOutput(`$ ${cmd}`, "input");
+      const result = this.deleteFile(file);
+      addTerminalOutput(result.output, result.success ? "success" : "error");
+      updateVisualPanel(this.gitState);
+      this.checkLessonProgress(cmd, result.output);
+    };
+
+    const openRenameFileModal = (oldName) => {
+      if (!renameFileModal || !renameFileOld || !renameFileNew) return;
+      renameFileOld.value = oldName;
+      renameFileNew.value = "";
+      renameFileModal.classList.add("active");
+      renameFileNew.focus();
+    };
+
+    const closeRenameFileModal = () => {
+      if (!renameFileModal) return;
+      renameFileModal.classList.remove("active");
+    };
+
+    const submitRenameFile = () => {
+      if (!renameFileOld || !renameFileNew) return;
+      const oldName = renameFileOld.value.trim();
+      const newName = renameFileNew.value.trim();
+      if (!oldName || !newName) return;
+
+      closeRenameFileModal();
+
+      const cmd = `mv ${oldName} ${newName}`;
+      addTerminalOutput(`$ ${cmd}`, "input");
+      const result = this.renameFile(oldName, newName);
+      addTerminalOutput(result.output, result.success ? "success" : "error");
+      updateVisualPanel(this.gitState);
+      this.checkLessonProgress(cmd, result.output);
+    };
+
+    const closeCreateFileModal = () => {
+      if (!createFileModal) return;
+      createFileModal.classList.remove("active");
+    };
+
+    const submitCreateFile = () => {
+      if (!createFileName) return;
+      const fileName = createFileName.value.trim();
+      if (!fileName) return;
+
+      closeCreateFileModal();
+
+      const cmd = `touch ${fileName}`;
+      addTerminalOutput(`$ ${cmd}`, "input");
+      const result = this.touchFile(fileName);
+      addTerminalOutput(result.output, result.success ? "success" : "error");
+      updateVisualPanel(this.gitState);
+      this.checkLessonProgress(cmd, result.output);
+    };
+
     lessonItems.forEach((item) => {
       item.addEventListener("click", () => {
         const lessonNum = Number.parseInt(item.dataset.lesson, 10);
@@ -66,6 +241,105 @@ export class GitTutorial {
         }
       });
     });
+
+    if (createFileBtn) {
+      createFileBtn.addEventListener("click", () => {
+        openCreateFileModal();
+      });
+    }
+
+    if (closeCreateFile) {
+      closeCreateFile.addEventListener("click", closeCreateFileModal);
+    }
+
+    if (cancelCreateFile) {
+      cancelCreateFile.addEventListener("click", closeCreateFileModal);
+    }
+
+    if (confirmCreateFile) {
+      confirmCreateFile.addEventListener("click", submitCreateFile);
+    }
+
+    if (createFileName) {
+      createFileName.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          submitCreateFile();
+        }
+      });
+    }
+
+    if (createFileModal) {
+      createFileModal.addEventListener("click", (e) => {
+        if (e.target === createFileModal) {
+          closeCreateFileModal();
+        }
+      });
+    }
+
+    if (workingFiles) {
+      workingFiles.addEventListener("click", (e) => {
+        const btn = e.target?.closest?.("button[data-action]");
+        if (!btn) return;
+        const action = btn.getAttribute("data-action");
+        const file = btn.getAttribute("data-file");
+        if (!action || !file) return;
+        if (!this.gitState.workingDirectory.includes(file)) return;
+        if (action === "rename") {
+          openRenameFileModal(file);
+        }
+        if (action === "delete") {
+          openDeleteFileModal(file);
+        }
+      });
+    }
+
+    if (closeRenameFile) {
+      closeRenameFile.addEventListener("click", closeRenameFileModal);
+    }
+
+    if (cancelRenameFile) {
+      cancelRenameFile.addEventListener("click", closeRenameFileModal);
+    }
+
+    if (confirmRenameFile) {
+      confirmRenameFile.addEventListener("click", submitRenameFile);
+    }
+
+    if (renameFileNew) {
+      renameFileNew.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          submitRenameFile();
+        }
+      });
+    }
+
+    if (renameFileModal) {
+      renameFileModal.addEventListener("click", (e) => {
+        if (e.target === renameFileModal) {
+          closeRenameFileModal();
+        }
+      });
+    }
+
+    if (closeDeleteFile) {
+      closeDeleteFile.addEventListener("click", closeDeleteFileModal);
+    }
+
+    if (cancelDeleteFile) {
+      cancelDeleteFile.addEventListener("click", closeDeleteFileModal);
+    }
+
+    if (confirmDeleteFile) {
+      confirmDeleteFile.addEventListener("click", submitDeleteFile);
+    }
+
+    if (deleteFileModal) {
+      deleteFileModal.addEventListener("click", (e) => {
+        if (e.target === deleteFileModal) {
+          closeDeleteFileModal();
+        }
+      });
+    }
   }
 
   getLesson(lessonNum) {
@@ -159,6 +433,27 @@ export class GitTutorial {
       case "cls":
         clearTerminal();
         return;
+
+      case "touch": {
+        const result = this.touchFile(args[0]);
+        output = result.output;
+        success = result.success;
+        break;
+      }
+
+      case "mv": {
+        const result = this.renameFile(args[0], args[1]);
+        output = result.output;
+        success = result.success;
+        break;
+      }
+
+      case "ls": {
+        const result = this.listFiles();
+        output = result.output;
+        success = result.success;
+        break;
+      }
 
       case "git":
         if (args.length === 0) {

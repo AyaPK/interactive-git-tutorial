@@ -335,6 +335,27 @@ body {
     margin-bottom: 1rem;
 }
 
+.repo-notice {
+    display: none;
+    background: #fffaf0;
+    border: 1px solid #fbd38d;
+    border-radius: 8px;
+    padding: 0.75rem;
+    color: #744210;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.repo-notice.active {
+    display: block;
+}
+
+.repo-notice code {
+    background: rgba(45, 55, 72, 0.08);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+}
+
 .git-state {
     display: flex;
     flex-direction: column;
@@ -364,6 +385,37 @@ body {
     color: #2d3748;
 }
 
+.repo-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.repo-section-header h4 {
+    margin-bottom: 0.75rem;
+}
+
+.repo-action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #2d3748;
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.repo-action-btn:hover {
+    background: #f7fafc;
+}
+
 .file-list,
 .commit-list {
     min-height: 60px;
@@ -377,6 +429,50 @@ body {
     font-size: 0.875rem;
     color: #4a5568;
     border-left: 3px solid #667eea;
+}
+
+.file-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-actions {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.file-action-btn {
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #2d3748;
+    border-radius: 6px;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex: 0 0 auto;
+}
+
+.file-action-btn:hover {
+    background: #f7fafc;
+}
+
+.file-action-btn.file-action-danger:hover {
+    background: #fff5f5;
+    border-color: #feb2b2;
+    color: #c53030;
 }
 
 .commit-item {
@@ -466,6 +562,75 @@ body {
 
 .modal-body {
     padding: 1.5rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.18);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.primary-btn,
+.secondary-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.primary-btn {
+    background: #667eea;
+    color: white;
+}
+
+.primary-btn:hover {
+    background: #5a67d8;
+}
+
+.primary-btn.danger-btn {
+    background: #e53e3e;
+}
+
+.primary-btn.danger-btn:hover {
+    background: #c53030;
+}
+
+.secondary-btn {
+    background: #edf2f7;
+    color: #2d3748;
+}
+
+.secondary-btn:hover {
+    background: #e2e8f0;
 }
 
 .command-help h4 {

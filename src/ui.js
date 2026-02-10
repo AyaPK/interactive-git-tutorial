@@ -49,13 +49,42 @@ export function updateLessonNav(currentLesson) {
 }
 
 export function updateVisualPanel(gitState) {
+  const visualPanel = document.getElementById("visualPanel");
+  const panelTitle = visualPanel?.querySelector(".panel-header h3");
+  const panelContent = visualPanel?.querySelector(".panel-content");
+  let repoNotice = document.getElementById("repoNotice");
+
+  if (!repoNotice && panelContent) {
+    repoNotice = document.createElement("div");
+    repoNotice.id = "repoNotice";
+    repoNotice.className = "repo-notice";
+    panelContent.prepend(repoNotice);
+  }
+
+  if (panelTitle) {
+    panelTitle.textContent = gitState.initialized ? "📊 Repository State" : "📊 Repository State (Uninitialized)";
+  }
+
+  if (repoNotice) {
+    if (!gitState.initialized) {
+      repoNotice.classList.add("active");
+      repoNotice.innerHTML = "<strong>Git is not initialized yet.</strong><div>Run <code>git init</code> to start tracking changes in this folder.</div>";
+    } else {
+      repoNotice.classList.remove("active");
+      repoNotice.textContent = "";
+    }
+  }
+
   const workingFiles = document.getElementById("workingFiles");
   const stagedFiles = document.getElementById("stagedFiles");
   const commits = document.getElementById("commits");
 
   if (gitState.workingDirectory.length > 0) {
     workingFiles.innerHTML = gitState.workingDirectory
-      .map((file) => `<div class="file-item">${file}</div>`)
+      .map(
+        (file) =>
+          `<div class="file-item file-row"><span class="file-name">${file}</span><span class="file-actions"><button class="file-action-btn" type="button" data-action="rename" data-file="${file}" title="Rename">✎</button><button class="file-action-btn file-action-danger" type="button" data-action="delete" data-file="${file}" title="Delete">🗑</button></span></div>`
+      )
       .join("");
   } else {
     workingFiles.innerHTML = '<div class="empty-state">No untracked files</div>';

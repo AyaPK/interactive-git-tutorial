@@ -5,6 +5,9 @@ export function showHelp() {
   help              - Show this help message
   clear             - Clear the terminal
   cls               - Clear the terminal
+  ls                - List files
+  touch <file>      - Create a new file
+  mv <old> <new>    - Rename a file
   
 Git Commands:
   git init          - Initialize a new Git repository

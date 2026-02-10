@@ -111,7 +111,10 @@
                     <div class="panel-content">
                         <div class="git-state" id="gitState">
                             <div class="working-directory">
-                                <h4>Working Directory</h4>
+                                <div class="repo-section-header">
+                                    <h4>Working Directory</h4>
+                                    <button class="repo-action-btn" id="createFileBtn" type="button" title="Create file">+</button>
+                                </div>
                                 <div class="file-list" id="workingFiles">
                                     <div class="file-item">README.md</div>
                                     <div class="file-item">app.js</div>
@@ -178,6 +181,67 @@
                                 <span>Clear the terminal</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-modal" id="createFileModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>New File</h3>
+                    <button class="close-btn" id="closeCreateFile">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label class="form-label" for="createFileName">File name</label>
+                        <input class="form-input" id="createFileName" type="text" placeholder="e.g. notes.txt" autocomplete="off">
+                    </div>
+                    <div class="modal-actions">
+                        <button class="secondary-btn" id="cancelCreateFile" type="button">Cancel</button>
+                        <button class="primary-btn" id="confirmCreateFile" type="button">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-modal" id="renameFileModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Rename File</h3>
+                    <button class="close-btn" id="closeRenameFile">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label class="form-label" for="renameFileOld">Current name</label>
+                        <input class="form-input" id="renameFileOld" type="text" readonly>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="renameFileNew">New name</label>
+                        <input class="form-input" id="renameFileNew" type="text" placeholder="e.g. notes-renamed.txt" autocomplete="off">
+                    </div>
+                    <div class="modal-actions">
+                        <button class="secondary-btn" id="cancelRenameFile" type="button">Cancel</button>
+                        <button class="primary-btn" id="confirmRenameFile" type="button">Rename</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-modal" id="deleteFileModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Delete File</h3>
+                    <button class="close-btn" id="closeDeleteFile">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label class="form-label" for="deleteFileName">File</label>
+                        <input class="form-input" id="deleteFileName" type="text" readonly>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="secondary-btn" id="cancelDeleteFile" type="button">Cancel</button>
+                        <button class="primary-btn danger-btn" id="confirmDeleteFile" type="button">Delete</button>
                     </div>
                 </div>
             </div>
