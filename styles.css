@@ -1,0 +1,536 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 300px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    width: 12.5%;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    color: #718096;
+    font-weight: 500;
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.right-sidebar {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.lesson-nav h3 {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+.lesson-list {
+    list-style: none;
+}
+
+.lesson-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lesson-item:hover {
+    background: #f7fafc;
+}
+
+.lesson-item.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.lesson-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.lesson-item.active .lesson-number {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.lesson-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.tutorial-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.lesson-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.lesson-header h2 {
+    font-size: 1.5rem;
+    color: #2d3748;
+}
+
+.help-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.2s ease;
+}
+
+.help-btn:hover {
+    background: #5a67d8;
+}
+
+.lesson-description {
+    margin-bottom: 1.5rem;
+}
+
+.lesson-description p {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: #4a5568;
+}
+
+.objectives {
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.objectives h4 {
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+}
+
+.objectives ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.objectives li {
+    padding: 0.25rem 0;
+    color: #4a5568;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.objectives li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+}
+
+.terminal-container {
+    background: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    flex: 0 0 360px;
+    display: flex;
+    flex-direction: column;
+    height: 460px;
+    min-height: 460px;
+}
+
+.terminal-header {
+    background: #2d2d2d;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.terminal-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.button.close {
+    background: #ff5f56;
+}
+
+.button.minimize {
+    background: #ffbd2e;
+}
+
+.button.maximize {
+    background: #27c93f;
+}
+
+.terminal-title {
+    color: #888;
+    font-size: 0.875rem;
+}
+
+.terminal-body {
+    flex: 1;
+    padding: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    min-height: 0;
+}
+
+.terminal-line {
+    color: #0f0;
+    margin-bottom: 0.25rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.prompt {
+    color: #0f0;
+    font-weight: bold;
+}
+
+.terminal-input {
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    outline: none;
+    flex: 1;
+}
+
+.visual-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.panel-header h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.git-state {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.working-directory,
+.staging-area,
+.repository {
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    border-top: 3px solid #667eea;
+}
+
+.staging-area {
+    border-top-color: #f6ad55;
+}
+
+.repository {
+    border-top-color: #48bb78;
+}
+
+.git-state h4 {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+    color: #2d3748;
+}
+
+.file-list,
+.commit-list {
+    min-height: 60px;
+}
+
+.file-item {
+    background: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    color: #4a5568;
+    border-left: 3px solid #667eea;
+}
+
+.commit-item {
+    background: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    color: #4a5568;
+    border-left: 3px solid #48bb78;
+}
+
+.commit-hash {
+    font-family: 'JetBrains Mono', monospace;
+    color: #718096;
+    font-size: 0.75rem;
+}
+
+.commit-message {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.commit-author {
+    color: #a0aec0;
+    font-size: 0.75rem;
+}
+
+.empty-state {
+    color: #a0aec0;
+    font-style: italic;
+    font-size: 0.875rem;
+}
+
+.help-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.help-modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h3 {
+    color: #2d3748;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #a0aec0;
+    padding: 0.25rem;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #4a5568;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.command-help h4 {
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+.command-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.command-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: #f7fafc;
+    border-radius: 6px;
+}
+
+.command-item code {
+    background: #2d3748;
+    color: #48bb78;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    min-width: 150px;
+}
+
+.command-item span {
+    color: #4a5568;
+    font-size: 0.875rem;
+}
+
+@media (max-width: 1024px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        order: 2;
+    }
+    
+    .right-sidebar {
+        width: 100%;
+        order: 3;
+    }
+    
+    .tutorial-area {
+        order: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .progress-bar {
+        max-width: 100%;
+    }
+    
+    .main-content {
+        padding: 0.5rem;
+    }
+    
+    .lesson-content,
+    .visual-panel {
+        padding: 1rem;
+    }
+}
