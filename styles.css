@@ -213,6 +213,15 @@ body {
     padding-left: 1.5rem;
 }
 
+.objectives li.completed {
+    color: #2f855a;
+    text-decoration: line-through;
+}
+
+.objectives li.completed:before {
+    color: #48bb78;
+}
+
 .objectives li:before {
     content: "✓";
     position: absolute;

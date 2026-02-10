@@ -13,17 +13,20 @@ import {
 export class GitTutorial {
   constructor() {
     this.currentLesson = 1;
+    this.currentSubLessonIndex = 0;
     this.totalLessons = totalLessons;
     this.terminalHistory = [];
     this.gitState = createInitialGitState();
     this.lessons = lessons;
+
+    this.objectiveCompletion = {};
 
     this.init();
   }
 
   init() {
     this.setupEventListeners();
-    this.loadLesson(1);
+    this.loadLesson(1, 0);
     updateVisualPanel(this.gitState);
   }
 
@@ -59,22 +62,73 @@ export class GitTutorial {
       item.addEventListener("click", () => {
         const lessonNum = Number.parseInt(item.dataset.lesson, 10);
         if (lessonNum <= this.currentLesson || this.currentLesson === this.totalLessons) {
-          this.loadLesson(lessonNum);
+          this.loadLesson(lessonNum, 0);
         }
       });
     });
   }
 
-  loadLesson(lessonNum) {
-    this.currentLesson = lessonNum;
-    const lesson = this.lessons[lessonNum];
+  getLesson(lessonNum) {
+    return this.lessons[lessonNum];
+  }
 
-    renderLesson(lesson);
-    updateProgress(this.currentLesson, this.totalLessons);
+  getSubLesson(lessonNum, subLessonIndex) {
+    const lesson = this.getLesson(lessonNum);
+    return lesson.subLessons[subLessonIndex];
+  }
+
+  getObjectiveStates(lessonNum, subLessonIndex) {
+    const key = `${lessonNum}:${subLessonIndex}`;
+    const subLesson = this.getSubLesson(lessonNum, subLessonIndex);
+    if (!this.objectiveCompletion[key]) {
+      this.objectiveCompletion[key] = new Array(subLesson.objectives.length).fill(false);
+    }
+    return this.objectiveCompletion[key];
+  }
+
+  getTotalSubLessonCount() {
+    return Object.values(this.lessons).reduce((acc, lesson) => acc + lesson.subLessons.length, 0);
+  }
+
+  getCurrentSubLessonStepIndex() {
+    let idx = 0;
+    for (let ln = 1; ln <= this.totalLessons; ln++) {
+      const lesson = this.getLesson(ln);
+      for (let s = 0; s < lesson.subLessons.length; s++) {
+        if (ln === this.currentLesson && s === this.currentSubLessonIndex) {
+          return idx;
+        }
+        idx++;
+      }
+    }
+    return 0;
+  }
+
+  refreshLessonUI() {
+    const lesson = this.getLesson(this.currentLesson);
+    const subLesson = this.getSubLesson(this.currentLesson, this.currentSubLessonIndex);
+    const objectiveStates = this.getObjectiveStates(this.currentLesson, this.currentSubLessonIndex);
+
+    renderLesson(lesson, subLesson, objectiveStates);
     updateLessonNav(this.currentLesson);
 
-    if (lesson.hint) {
-      addTerminalOutput(`💡 Hint: ${lesson.hint}`, "hint");
+    const totalSteps = this.getTotalSubLessonCount();
+    const stepIndex = this.getCurrentSubLessonStepIndex();
+    const stepText = `Lesson ${this.currentLesson} of ${this.totalLessons} — Step ${stepIndex + 1} of ${totalSteps}`;
+    const percent = totalSteps === 0 ? 0 : ((stepIndex + 1) / totalSteps) * 100;
+    updateProgress(stepText, percent);
+  }
+
+  loadLesson(lessonNum, subLessonIndex) {
+    this.currentLesson = lessonNum;
+    this.currentSubLessonIndex = subLessonIndex;
+
+    const subLesson = this.getSubLesson(this.currentLesson, this.currentSubLessonIndex);
+    this.getObjectiveStates(this.currentLesson, this.currentSubLessonIndex);
+    this.refreshLessonUI();
+
+    if (subLesson.hint) {
+      addTerminalOutput(`💡 Hint: ${subLesson.hint}`, "hint");
     }
   }
 
@@ -102,6 +156,10 @@ export class GitTutorial {
         clearTerminal();
         return;
 
+      case "cls":
+        clearTerminal();
+        return;
+
       case "git":
         if (args.length === 0) {
           output = "git: missing command\nUsage: git <command> [<args>]";
@@ -118,24 +176,48 @@ export class GitTutorial {
 
     addTerminalOutput(output, success ? "success" : "error");
     updateVisualPanel(this.gitState);
-    this.checkLessonProgress(command);
+    this.checkLessonProgress(command, output);
   }
 
-  checkLessonProgress(command) {
-    const lesson = this.lessons[this.currentLesson];
-    if (!lesson.expectedCommands) return;
+  checkLessonProgress(command, output) {
+    const lesson = this.getLesson(this.currentLesson);
+    const subLesson = this.getSubLesson(this.currentLesson, this.currentSubLessonIndex);
+    const objectiveStates = this.getObjectiveStates(this.currentLesson, this.currentSubLessonIndex);
 
-    const commandMatch = lesson.expectedCommands.some((expected) => command.includes(expected));
+    let changed = false;
 
-    if (!commandMatch) return;
+    subLesson.objectives.forEach((obj, idx) => {
+      if (objectiveStates[idx]) return;
+      if (!command.includes(obj.commandIncludes)) return;
+      if (!output.includes(obj.outputIncludes)) return;
+      objectiveStates[idx] = true;
+      changed = true;
+      addTerminalOutput(`✅ Objective complete: ${obj.title}`, "success");
+    });
+
+    if (changed) {
+      this.refreshLessonUI();
+    }
+
+    const allDone = objectiveStates.every(Boolean);
+    if (!allDone) return;
 
     setTimeout(() => {
-      if (this.currentLesson < this.totalLessons) {
-        addTerminalOutput("🎉 Great job! You can proceed to the next lesson.", "success");
-        this.loadLesson(this.currentLesson + 1);
-      } else {
-        addTerminalOutput("🎊 Congratulations! You've completed all lessons!", "success");
+      addTerminalOutput("🎉 Sub-lesson complete!", "success");
+
+      const nextSubIndex = this.currentSubLessonIndex + 1;
+      if (nextSubIndex < lesson.subLessons.length) {
+        this.loadLesson(this.currentLesson, nextSubIndex);
+        return;
       }
-    }, 1000);
+
+      if (this.currentLesson < this.totalLessons) {
+        addTerminalOutput("🎉 Lesson complete! Moving to the next lesson.", "success");
+        this.loadLesson(this.currentLesson + 1, 0);
+        return;
+      }
+
+      addTerminalOutput("🎊 Congratulations! You've completed all lessons!", "success");
+    }, 600);
   }
 }

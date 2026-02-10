@@ -3,114 +3,207 @@ export const totalLessons = 8;
 export const lessons = {
   1: {
     title: "Introduction to Git",
-    description: `
-                    <p>Welcome to the interactive Git tutorial! In this lesson, you'll learn the basics of Git and how to use it through a command-line interface.</p>
-                    <p>Git is a distributed version control system that helps you track changes in your code and collaborate with others.</p>
+    subLessons: [
+      {
+        title: "Using the tutorial terminal",
+        description: `
+                    <p>Welcome to the interactive Git tutorial! You'll learn Git through commands in the terminal below.</p>
+                    <p>Type commands and observe the output + the repository state on the right.</p>
                 `,
-    objectives: [
-      "Understand what Git is and why it's useful",
-      "Learn basic Git terminology",
-      "Navigate the terminal interface"
-    ],
-    expectedCommands: ["help", "clear"],
-    hint: "Try typing 'help' to see available commands!"
+        objectives: [
+          {
+            title: "Open the built-in help",
+            commandIncludes: "help",
+            outputIncludes: "Available Commands:"
+          }
+        ],
+        hint: "Try typing 'help' to see available commands."
+      }
+    ]
   },
   2: {
     title: "git init & git status",
-    description: `
-                    <p>Every Git project starts with initializing a repository. The <code>git init</code> command creates a new Git repository.</p>
-                    <p>The <code>git status</code> command shows the current state of your working directory and staging area.</p>
+    subLessons: [
+      {
+        title: "Initialize a repository",
+        description: `
+                    <p>Before you can track changes, you need to initialize a Git repository.</p>
                 `,
-    objectives: [
-      "Initialize a Git repository",
-      "Check repository status",
-      "Understand working directory vs staging area"
-    ],
-    expectedCommands: ["git init", "git status"],
-    hint: "Start by typing 'git init' to initialize your repository!"
+        objectives: [
+          {
+            title: "Run git init",
+            commandIncludes: "git init",
+            outputIncludes: "Initialized empty Git repository"
+          }
+        ],
+        hint: "Type 'git init'"
+      },
+      {
+        title: "Inspect repository status",
+        description: `
+                    <p><code>git status</code> tells you what's staged, what isn't, and what branch you're on.</p>
+                `,
+        objectives: [
+          {
+            title: "Run git status",
+            commandIncludes: "git status",
+            outputIncludes: "On branch"
+          },
+          {
+            title: "See untracked files",
+            commandIncludes: "git status",
+            outputIncludes: "Untracked files:"
+          }
+        ],
+        hint: "Type 'git status'"
+      }
+    ]
   },
   3: {
     title: "git add",
-    description: `
-                    <p>The <code>git add</code> command moves files from your working directory to the staging area.</p>
-                    <p>The staging area is where you prepare changes before committing them.</p>
+    subLessons: [
+      {
+        title: "Stage a file",
+        description: `
+                    <p><code>git add</code> moves changes into the staging area so they can be committed.</p>
                 `,
-    objectives: [
-      "Add files to the staging area",
-      "Stage specific files vs all files",
-      "Understand the staging process"
-    ],
-    expectedCommands: ["git add"],
-    hint: "Try 'git add README.md' to stage a specific file, or 'git add .' to stage all files!"
+        objectives: [
+          {
+            title: "Stage README.md",
+            commandIncludes: "git add README.md",
+            outputIncludes: "Added"
+          }
+        ],
+        hint: "Type 'git add README.md'"
+      }
+    ]
   },
   4: {
     title: "git commit",
-    description: `
-                    <p>The <code>git commit</code> command saves your staged changes to the repository.</p>
-                    <p>Every commit needs a descriptive message that explains what changes were made.</p>
+    subLessons: [
+      {
+        title: "Create a commit",
+        description: `
+                    <p>A commit records a snapshot of your staged changes with a message.</p>
                 `,
-    objectives: [
-      "Create your first commit",
-      "Write good commit messages",
-      "Understand the commit process"
-    ],
-    expectedCommands: ["git commit"],
-    hint: "First stage some files with 'git add', then commit with 'git commit -m \"Your message\"'"
+        objectives: [
+          {
+            title: "Commit with a message",
+            commandIncludes: "git commit -m",
+            outputIncludes: "]"
+          }
+        ],
+        hint: "Try: git commit -m \"my first commit\""
+      }
+    ]
   },
   5: {
     title: "git push & git pull",
-    description: `
-                    <p><code>git push</code> uploads your local commits to a remote repository.</p>
-                    <p><code>git pull</code> downloads changes from the remote repository and merges them into your local branch.</p>
+    subLessons: [
+      {
+        title: "Add a remote",
+        description: `
+                    <p>To push and pull, you need a remote repository configured.</p>
                 `,
-    objectives: [
-      "Push changes to remote repository",
-      "Pull changes from remote repository",
-      "Understand remote collaboration"
-    ],
-    expectedCommands: ["git push", "git pull"],
-    hint: "First make a commit, then try 'git push' to share it with the world!"
+        objectives: [
+          {
+            title: "Add origin remote",
+            commandIncludes: "git remote add origin",
+            outputIncludes: "Remote repository added successfully"
+          }
+        ],
+        hint: "Try: git remote add origin https://github.com/tutorial/repo.git"
+      },
+      {
+        title: "Push changes",
+        description: `
+                    <p><code>git push</code> uploads your commits to the remote.</p>
+                `,
+        objectives: [
+          {
+            title: "Run git push",
+            commandIncludes: "git push",
+            outputIncludes: "main -> main"
+          }
+        ],
+        hint: "Type 'git push'"
+      },
+      {
+        title: "Pull changes",
+        description: `
+                    <p><code>git pull</code> downloads and integrates changes from the remote.</p>
+                `,
+        objectives: [
+          {
+            title: "Run git pull",
+            commandIncludes: "git pull",
+            outputIncludes: "Fast-forward"
+          }
+        ],
+        hint: "Type 'git pull'"
+      }
+    ]
   },
   6: {
     title: "Branching Basics",
-    description: `
-                    <p>Branches allow you to work on different features independently.</p>
-                    <p>The <code>git branch</code> command manages branches, and <code>git checkout</code> switches between them.</p>
+    subLessons: [
+      {
+        title: "Create and switch branches",
+        description: `
+                    <p>Branches let you work on changes without affecting your main line of development.</p>
                 `,
-    objectives: [
-      "Create new branches",
-      "Switch between branches",
-      "Understand branch isolation"
-    ],
-    expectedCommands: ["git branch", "git checkout"],
-    hint: "Try 'git branch feature' to create a new branch, then 'git checkout feature' to switch to it!"
+        objectives: [
+          {
+            title: "Create a branch",
+            commandIncludes: "git branch",
+            outputIncludes: "Created branch"
+          },
+          {
+            title: "Switch branches",
+            commandIncludes: "git checkout",
+            outputIncludes: "Switched to branch"
+          }
+        ],
+        hint: "Try: git branch feature then git checkout feature"
+      }
+    ]
   },
   7: {
     title: "Merging",
-    description: `
-                    <p>Merging combines changes from different branches.</p>
-                    <p>The <code>git merge</code> command integrates changes from one branch into another.</p>
+    subLessons: [
+      {
+        title: "Merge a branch",
+        description: `
+                    <p>Merging combines changes from one branch into another.</p>
                 `,
-    objectives: [
-      "Merge branches",
-      "Handle merge conflicts",
-      "Understand merge strategies"
-    ],
-    expectedCommands: ["git merge"],
-    hint: "Switch to main branch, then try 'git merge feature' to bring in changes!"
+        objectives: [
+          {
+            title: "Run git merge",
+            commandIncludes: "git merge",
+            outputIncludes: "Merge completed successfully"
+          }
+        ],
+        hint: "Try: git merge feature"
+      }
+    ]
   },
   8: {
     title: "Git Rebase",
-    description: `
-                    <p>Rebase is an alternative to merging that rewrites commit history.</p>
-                    <p>The <code>git rebase</code> command moves or combines a sequence of commits to a new base.</p>
+    subLessons: [
+      {
+        title: "Rebase onto another branch",
+        description: `
+                    <p>Rebase reapplies commits on top of another base commit, creating a linear history.</p>
                 `,
-    objectives: [
-      "Understand rebase vs merge",
-      "Rebase branches",
-      "Clean up commit history"
-    ],
-    expectedCommands: ["git rebase"],
-    hint: "Try 'git rebase main' while on a feature branch to rebase onto main!"
+        objectives: [
+          {
+            title: "Run git rebase",
+            commandIncludes: "git rebase",
+            outputIncludes: "Successfully rebased"
+          }
+        ],
+        hint: "Try: git rebase main"
+      }
+    ]
   }
 };

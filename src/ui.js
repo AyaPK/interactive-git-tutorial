@@ -13,21 +13,27 @@ export function clearTerminal() {
   addTerminalOutput("Terminal cleared. Type 'help' to see available commands.", "system");
 }
 
-export function renderLesson(lesson) {
-  document.getElementById("lessonTitle").textContent = lesson.title;
-  document.getElementById("lessonDescription").innerHTML = lesson.description;
+export function renderLesson(mainLesson, subLesson, objectiveStates) {
+  const titleParts = [mainLesson.title, subLesson.title].filter(Boolean);
+  document.getElementById("lessonTitle").textContent = titleParts.join(" — ");
+  document.getElementById("lessonDescription").innerHTML = subLesson.description;
 
   const objectivesList = document.getElementById("objectives").querySelector("ul");
-  objectivesList.innerHTML = lesson.objectives.map((obj) => `<li>${obj}</li>`).join("");
+  objectivesList.innerHTML = subLesson.objectives
+    .map((obj, idx) => {
+      const completed = Boolean(objectiveStates?.[idx]);
+      const cls = completed ? "completed" : "";
+      return `<li class="${cls}">${obj.title}</li>`;
+    })
+    .join("");
 }
 
-export function updateProgress(currentLesson, totalLessons) {
+export function updateProgress(progressTextValue, progressPercent) {
   const progressFill = document.getElementById("progressFill");
   const progressText = document.getElementById("progressText");
 
-  const progress = (currentLesson / totalLessons) * 100;
-  progressFill.style.width = `${progress}%`;
-  progressText.textContent = `Lesson ${currentLesson} of ${totalLessons}`;
+  progressFill.style.width = `${progressPercent}%`;
+  progressText.textContent = progressTextValue;
 }
 
 export function updateLessonNav(currentLesson) {

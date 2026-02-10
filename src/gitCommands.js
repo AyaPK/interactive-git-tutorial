@@ -4,6 +4,7 @@ export function showHelp() {
   return `Available Commands:
   help              - Show this help message
   clear             - Clear the terminal
+  cls               - Clear the terminal
   
 Git Commands:
   git init          - Initialize a new Git repository
