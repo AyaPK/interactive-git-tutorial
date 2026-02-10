@@ -139,7 +139,54 @@ function renderTimeline(gitState) {
 
   const headByBranch = gitState.branchHeads || {};
   const remoteHeadByBranch = gitState.remoteBranchHeads || {};
-  const maxSlots = commits.length;
+  const branchBases = gitState.branchBases || {};
+  const branchParents = gitState.branchParents || {};
+
+  const labelWidth = 140;
+  const leftPadding = 16;
+  const topPadding = 16;
+  const laneHeight = 34;
+  const stepX = 44;
+  const radius = 6;
+
+  const colors = [
+    "#667eea",
+    "#48bb78",
+    "#ed8936",
+    "#805ad5",
+    "#38b2ac",
+    "#e53e3e"
+  ];
+
+  const branchToColor = new Map();
+  branches.forEach((b, i) => branchToColor.set(b, colors[i % colors.length]));
+
+  const branchToY = new Map();
+  branches.forEach((b, i) => branchToY.set(b, topPadding + i * laneHeight));
+
+  const commitToX = new Map();
+  commits.forEach((c, i) => commitToX.set(c.hash, labelWidth + leftPadding + i * stepX));
+
+  const commitToY = new Map();
+  commits.forEach((c) => {
+    const y = branchToY.get(c.branch) ?? topPadding;
+    commitToY.set(c.hash, y);
+  });
+
+  const width = labelWidth + leftPadding * 2 + Math.max(1, commits.length - 1) * stepX + stepX;
+  const height = topPadding * 2 + Math.max(1, branches.length) * laneHeight;
+
+  const lines = [];
+  const nodes = [];
+  const labels = [];
+
+  const branchLabelHtml = branches
+    .map((b) => {
+      const isCurrent = b === gitState.currentBranch;
+      const badge = isCurrent ? `<span class="timeline-branch-badge">current</span>` : "";
+      return `<div class="timeline-branch" style="height:${laneHeight}px">${escapeHtml(b)}${badge}</div>`;
+    })
+    .join("");
 
   const commitsByHash = new Map(commits.map((c) => [c.hash, c]));
 
@@ -157,48 +204,91 @@ function renderTimeline(gitState) {
     return reachable;
   };
 
-  const html = branches
-    .map((branch) => {
-      const isCurrent = branch === gitState.currentBranch;
+  branches.forEach((branch) => {
+    const head = headByBranch?.[branch] ?? null;
+    const reachable = getReachableSet(head);
+    const y = branchToY.get(branch);
+    if (y === undefined) return;
 
-      const headHash = headByBranch?.[branch] ?? null;
-      const remoteHash = remoteHeadByBranch?.[`origin/${branch}`] ?? null;
-      const reachable = getReachableSet(headHash);
+    const baseHash = branchBases?.[branch] ?? null;
+    const parentBranch = branchParents?.[branch] ?? null;
+    if (branch !== "main" && baseHash && parentBranch && branchToY.has(parentBranch)) {
+      const x = commitToX.get(baseHash);
+      const parentY = branchToY.get(parentBranch);
+      if (x !== undefined && parentY !== undefined) {
+        lines.push(
+          `<path class="timeline-path split" d="M ${x} ${parentY} C ${x} ${parentY + 10}, ${x} ${y - 10}, ${x} ${y}" />`
+        );
+      }
+    }
 
-      const commitIndexes = commits
-        .map((c, idx) => ({ c, idx }))
-        .filter(({ c }) => reachable.has(c.hash))
-        .map(({ idx }) => idx);
+    const reachableCommits = commits
+      .filter((c) => reachable.has(c.hash) && c.branch === branch)
+      .map((c) => c.hash);
 
-      const firstIdx = commitIndexes.length ? Math.min(...commitIndexes) : null;
-      const lastIdx = commitIndexes.length ? Math.max(...commitIndexes) : null;
+    const coords = reachableCommits
+      .map((h) => ({ x: commitToX.get(h), y }))
+      .filter((p) => typeof p.x === "number");
 
-      const track = commits
-        .map((c, idx) => {
-          const isOnRef = reachable.has(c.hash);
-          if (!isOnRef) {
-            const connected = firstIdx !== null && lastIdx !== null && idx >= firstIdx && idx <= lastIdx;
-            return `<div class="timeline-slot" data-idx="${idx}">${connected ? '<div class="timeline-line"></div>' : ""}</div>`;
-          }
-          const isHead = headHash === c.hash;
-          const isRemoteHead = remoteHash && remoteHash === c.hash;
-          const dotClass = c.type === "merge" ? "timeline-dot merge" : "timeline-dot";
-          const headLabel = isHead ? `<div class="timeline-head">${isCurrent ? "HEAD" : ""}</div>` : "";
-          const remoteLabel = isRemoteHead ? '<div class="timeline-remote">REMOTE</div>' : "";
-          const title = `${c.hash} — ${c.message}`;
-          const connected = firstIdx !== null && lastIdx !== null && idx >= firstIdx && idx <= lastIdx;
-          const line = connected ? '<div class="timeline-line"></div>' : "";
-          return `<div class="timeline-slot" data-idx="${idx}" title="${escapeHtml(title)}">${line}${headLabel}${remoteLabel}<div class="${dotClass}"></div></div>`;
-        })
-        .slice(0, maxSlots)
-        .join("");
+    for (let i = 0; i < coords.length - 1; i++) {
+      const a = coords[i];
+      const b = coords[i + 1];
+      lines.push(
+        `<path class="timeline-path" stroke="${branchToColor.get(branch)}" d="M ${a.x} ${a.y} L ${b.x} ${b.y}" />`
+      );
+    }
+  });
 
-      const badge = isCurrent ? `<span class="timeline-branch-badge">current</span>` : "";
-      return `<div class="timeline-row"><div class="timeline-branch">${escapeHtml(branch)}${badge}</div><div class="timeline-track">${track}</div></div>`;
-    })
-    .join("");
+  commits.forEach((c) => {
+    const x = commitToX.get(c.hash);
+    const y = commitToY.get(c.hash);
+    if (typeof x !== "number" || typeof y !== "number") return;
 
-  rowsEl.innerHTML = html;
+    const color = branchToColor.get(c.branch) ?? "#667eea";
+    nodes.push(
+      `<circle class="timeline-node" cx="${x}" cy="${y}" r="${radius}" fill="${color}" />`
+    );
+
+    if (Array.isArray(c.parents) && c.parents.length > 1) {
+      const otherParent = c.parents[1];
+      const px = commitToX.get(otherParent);
+      const py = commitToY.get(otherParent);
+      if (typeof px === "number" && typeof py === "number") {
+        const midX = (px + x) / 2;
+        lines.push(
+          `<path class="timeline-path merge" d="M ${px} ${py} C ${midX} ${py}, ${midX} ${y}, ${x} ${y}" />`
+        );
+      }
+    }
+
+    if (headByBranch?.[gitState.currentBranch] === c.hash) {
+      labels.push(`<text class="timeline-label head" x="${x}" y="${y - 12}" text-anchor="middle">HEAD</text>`);
+    }
+
+    const remoteHash = remoteHeadByBranch?.[`origin/${c.branch}`] ?? null;
+    if (remoteHash && remoteHash === c.hash) {
+      labels.push(
+        `<text class="timeline-label remote" x="${x}" y="${y - 12}" text-anchor="middle">REMOTE</text>`
+      );
+    }
+  });
+
+  const svg = `
+    <div class="timeline-graph">
+      <div class="timeline-graph-labels" style="width:${labelWidth}px">
+        ${branchLabelHtml}
+      </div>
+      <div class="timeline-graph-canvas">
+        <svg class="timeline-svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+          <g class="timeline-layer lines">${lines.join("")}</g>
+          <g class="timeline-layer nodes">${nodes.join("")}</g>
+          <g class="timeline-layer labels">${labels.join("")}</g>
+        </svg>
+      </div>
+    </div>
+  `;
+
+  rowsEl.innerHTML = svg;
 }
 
 function escapeHtml(value) {

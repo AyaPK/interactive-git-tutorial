@@ -132,11 +132,15 @@ function handleGitBranch(gitState, args) {
   const branchName = args[0];
   if (!gitState.branches) gitState.branches = [gitState.currentBranch];
   if (!gitState.branchHeads) gitState.branchHeads = { [gitState.currentBranch]: null };
+  if (!gitState.branchBases) gitState.branchBases = { [gitState.currentBranch]: null };
+  if (!gitState.branchParents) gitState.branchParents = { [gitState.currentBranch]: null };
   if (gitState.branches.includes(branchName)) {
     return `Branch '${branchName}' already exists`;
   }
   gitState.branches.push(branchName);
   gitState.branchHeads[branchName] = gitState.branchHeads[gitState.currentBranch] ?? null;
+  gitState.branchBases[branchName] = gitState.branchHeads[gitState.currentBranch] ?? null;
+  gitState.branchParents[branchName] = gitState.currentBranch;
   return `Created branch '${branchName}'`;
 }
 
@@ -148,9 +152,13 @@ function handleGitCheckout(gitState, args) {
   const branchName = args[0];
   if (!gitState.branches) gitState.branches = [gitState.currentBranch];
   if (!gitState.branchHeads) gitState.branchHeads = { [gitState.currentBranch]: null };
+  if (!gitState.branchBases) gitState.branchBases = { [gitState.currentBranch]: null };
+  if (!gitState.branchParents) gitState.branchParents = { [gitState.currentBranch]: null };
   if (!gitState.branches.includes(branchName)) {
     gitState.branches.push(branchName);
     gitState.branchHeads[branchName] = gitState.branchHeads[gitState.currentBranch] ?? null;
+    gitState.branchBases[branchName] = gitState.branchHeads[gitState.currentBranch] ?? null;
+    gitState.branchParents[branchName] = gitState.currentBranch;
   }
   gitState.currentBranch = branchName;
   return `Switched to branch '${branchName}'`;

@@ -122,6 +122,64 @@ body {
     display: block;
 }
 
+.timeline-graph {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: start;
+    gap: 0.75rem;
+}
+
+.timeline-graph-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.timeline-graph-canvas {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.timeline-svg {
+    display: block;
+}
+
+.timeline-path {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0.55;
+}
+
+.timeline-path.merge {
+    stroke: rgba(72, 187, 120, 0.85);
+    opacity: 0.55;
+}
+
+.timeline-path.split {
+    stroke: rgba(74, 85, 104, 0.5);
+    stroke-width: 2;
+    opacity: 0.5;
+}
+
+.timeline-node {
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
+}
+
+.timeline-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.timeline-label.head {
+    fill: #2d3748;
+}
+
+.timeline-label.remote {
+    fill: #805ad5;
+}
+
 .timeline-row {
     display: grid;
     grid-template-columns: 140px 1fr;
@@ -171,6 +229,18 @@ body {
     top: 50%;
     height: 2px;
     transform: translateY(-50%);
+    background: rgba(74, 85, 104, 0.25);
+    border-radius: 2px;
+    z-index: 1;
+}
+
+.timeline-split {
+    position: absolute;
+    left: 50%;
+    top: -10px;
+    bottom: -10px;
+    width: 2px;
+    transform: translateX(-50%);
     background: rgba(74, 85, 104, 0.25);
     border-radius: 2px;
     z-index: 1;
