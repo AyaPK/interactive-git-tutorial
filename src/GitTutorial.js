@@ -108,6 +108,10 @@ export class GitTutorial {
     const helpBtn = document.getElementById("helpBtn");
     const closeHelp = document.getElementById("closeHelp");
     const helpModal = document.getElementById("helpModal");
+    const furtherReadingBtn = document.getElementById("furtherReadingBtn");
+    const furtherReadingModal = document.getElementById("furtherReadingModal");
+    const closeFurtherReading = document.getElementById("closeFurtherReading");
+    const closeFurtherReadingBottom = document.getElementById("closeFurtherReadingBottom");
     const lessonItems = document.querySelectorAll(".lesson-item");
     const createFileBtn = document.getElementById("createFileBtn");
     const createFileModal = document.getElementById("createFileModal");
@@ -148,6 +152,33 @@ export class GitTutorial {
         helpModal.classList.remove("active");
       }
     });
+
+    if (furtherReadingBtn && furtherReadingModal) {
+      furtherReadingBtn.addEventListener("click", () => {
+        furtherReadingModal.classList.add("active");
+      });
+    }
+
+    const closeFurtherReadingModal = () => {
+      if (!furtherReadingModal) return;
+      furtherReadingModal.classList.remove("active");
+    };
+
+    if (closeFurtherReading) {
+      closeFurtherReading.addEventListener("click", closeFurtherReadingModal);
+    }
+
+    if (closeFurtherReadingBottom) {
+      closeFurtherReadingBottom.addEventListener("click", closeFurtherReadingModal);
+    }
+
+    if (furtherReadingModal) {
+      furtherReadingModal.addEventListener("click", (e) => {
+        if (e.target === furtherReadingModal) {
+          closeFurtherReadingModal();
+        }
+      });
+    }
 
     const openCreateFileModal = () => {
       if (!createFileModal) return;

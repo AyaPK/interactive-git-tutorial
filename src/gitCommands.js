@@ -225,10 +225,12 @@ export function handleGitCommand(gitState, subcommand, args) {
     case "push":
       if (!gitState.initialized) {
         output = "fatal: not a git repository (or any of the parent directories): .git";
-      } else if (!gitState.remoteConnected) {
-        output =
-          "fatal: No configured push destination.\nPlease specify the remote repository with git remote add";
       } else {
+        if (gitState.commits.length === 0) {
+          output = "Everything up-to-date";
+          success = true;
+          break;
+        }
         output =
           "Enumerating objects: 5, done.\nCounting objects: 100% (5/5), done.\nWriting objects: 100% (3/3), done.\nTotal 3 (delta 0), reused 0 (delta 0)\nTo https://github.com/tutorial/repo.git\n   abc1234..def5678  main -> main";
         success = true;
@@ -238,9 +240,6 @@ export function handleGitCommand(gitState, subcommand, args) {
     case "pull":
       if (!gitState.initialized) {
         output = "fatal: not a git repository (or any of the parent directories): .git";
-      } else if (!gitState.remoteConnected) {
-        output =
-          "fatal: No configured pull destination.\nPlease specify the remote repository with git remote add";
       } else {
         output =
           "remote: Counting objects: 5, done.\nremote: Compressing objects: 100% (3/3), done.\nremote: Total 5 (delta 2), reused 5 (delta 2)\nUnpacking objects: 100% (5/5), done.\nFrom https://github.com/tutorial/repo.git\n   abc1234..def5678  main     -> origin/main\nUpdating abc1234..def5678\nFast-forward";

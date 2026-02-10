@@ -101,23 +101,10 @@ export const lessons = {
     title: "git push & git pull",
     subLessons: [
       {
-        title: "Add a remote",
-        description: `
-                    <p>To push and pull, you need a remote repository configured.</p>
-                `,
-        objectives: [
-          {
-            title: "Add origin remote",
-            commandIncludes: "git remote add origin",
-            outputIncludes: "Remote repository added successfully"
-          }
-        ],
-        hint: "Try: git remote add origin https://github.com/tutorial/repo.git"
-      },
-      {
         title: "Push changes",
         description: `
-                    <p><code>git push</code> uploads your commits to the remote.</p>
+                    <p><code>git push</code> uploads your commits to a remote repository.</p>
+                    <p>In real projects, you usually need to set up a remote like <code>origin</code> first. In this tutorial, pushing works automatically so you can focus on the workflow.</p>
                 `,
         objectives: [
           {
@@ -132,6 +119,7 @@ export const lessons = {
         title: "Pull changes",
         description: `
                     <p><code>git pull</code> downloads and integrates changes from the remote.</p>
+                    <p>If you want to learn how remotes are set up on GitHub, use the Further reading button.</p>
                 `,
         objectives: [
           {

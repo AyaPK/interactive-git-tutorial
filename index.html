@@ -64,7 +64,10 @@
                 <div class="lesson-content">
                     <div class="lesson-header">
                         <h2 id="lessonTitle">Introduction to Git</h2>
-                        <button class="help-btn" id="helpBtn">❓ Help</button>
+                        <div class="lesson-actions">
+                            <button class="secondary-action-btn" id="furtherReadingBtn" type="button">📘 Further reading</button>
+                            <button class="help-btn" id="helpBtn">❓ Help</button>
+                        </div>
                     </div>
                     <div class="lesson-description" id="lessonDescription">
                         <p>Welcome to the interactive Git tutorial! In this lesson, you'll learn the basics of Git and how to use it through a command-line interface.</p>
@@ -253,6 +256,34 @@
                     <div class="modal-actions">
                         <button class="secondary-btn" id="cancelDeleteFile" type="button">Cancel</button>
                         <button class="primary-btn danger-btn" id="confirmDeleteFile" type="button">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-modal" id="furtherReadingModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>📘 Further reading: GitHub setup</h3>
+                    <button class="close-btn" id="closeFurtherReading">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="reading-content">
+                        <h4>Create a repository on GitHub</h4>
+                        <p>1. Go to GitHub and click <strong>New repository</strong>.</p>
+                        <p>2. Choose a name and click <strong>Create repository</strong>.</p>
+
+                        <h4>Connect your local repo to GitHub</h4>
+                        <p>From your project folder:</p>
+                        <div class="reading-code">git remote add origin https://github.com/&lt;you&gt;/&lt;repo&gt;.git</div>
+                        <div class="reading-code">git push -u origin main</div>
+
+                        <h4>Common notes</h4>
+                        <p>- The name <code>origin</code> is just a convention for the default remote.</p>
+                        <p>- You may need to sign in / set up SSH keys or a token depending on your GitHub settings.</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="primary-btn" id="closeFurtherReadingBottom" type="button">Got it</button>
                     </div>
                 </div>
             </div>
