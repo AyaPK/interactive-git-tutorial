@@ -97,9 +97,10 @@ function handleGitAdd(gitState, args) {
 function handleGitCommit(gitState, args) {
   let message = "";
 
-  const messageIndex = args.indexOf("-m");
+  // Support -m and combined flags like -am or -ma (message is still the next arg)
+  const messageIndex = args.findIndex((a) => a === "-m" || (a.startsWith("-") && a.includes("m") && a.length > 2));
   if (messageIndex !== -1 && args[messageIndex + 1]) {
-    message = args[messageIndex + 1].replace(/['"]/g, "");
+    message = String(args[messageIndex + 1]).replace(/['"]/g, "");
   } else {
     return "Aborting commit due to empty commit message.\nUse: git commit -m \"Your commit message\"";
   }
@@ -238,11 +239,21 @@ export function handleGitCommand(gitState, subcommand, args) {
     case "commit":
       if (!gitState.initialized) {
         output = "fatal: not a git repository (or any of the parent directories): .git";
-      } else if (gitState.stagedFiles.length === 0) {
-        output = "nothing to commit, working tree clean";
       } else {
-        output = handleGitCommit(gitState, args);
-        success = true;
+        // Support `git commit -a` and combined short flags like `-am` or `-ma`
+        if (args.some((a) => a === "-a" || (a.startsWith("-") && a.includes("a") && a.length > 2))) {
+          if (Array.isArray(gitState.workingDirectory) && gitState.workingDirectory.length > 0) {
+            gitState.stagedFiles.push(...gitState.workingDirectory);
+            gitState.workingDirectory = [];
+          }
+        }
+
+        if (gitState.stagedFiles.length === 0) {
+          output = "nothing to commit, working tree clean";
+        } else {
+          output = handleGitCommit(gitState, args);
+          success = true;
+        }
       }
       break;
 

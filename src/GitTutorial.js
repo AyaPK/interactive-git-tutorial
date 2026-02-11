@@ -10,6 +10,16 @@ import {
   updateVisualPanel
 } from "./ui.js";
 
+function tokenize(input) {
+  const tokens = [];
+  const regex = /"([^"]*)"|'([^']*)'|[^\s]+/g;
+  let match;
+  while ((match = regex.exec(input)) !== null) {
+    tokens.push(match[1] ?? match[2] ?? match[0]);
+  }
+  return tokens;
+}
+
 export class GitTutorial {
   constructor() {
     this.currentLesson = 1;
@@ -444,7 +454,7 @@ export class GitTutorial {
     addTerminalOutput(`$ ${command}`, "input");
     this.terminalHistory.push(command);
 
-    const parts = command.split(" ");
+    const parts = tokenize(command);
     const mainCommand = parts[0];
     const args = parts.slice(1);
 
