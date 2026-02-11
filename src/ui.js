@@ -191,12 +191,12 @@ function renderTimeline(gitState) {
   const branchBases = gitState.branchBases || {};
   const branchParents = gitState.branchParents || {};
 
-  const labelWidth = 140;
-  const leftPadding = 16;
-  const topPadding = 16;
-  const laneHeight = 34;
-  const stepX = 44;
-  const radius = 6;
+  const labelWidth = 119;
+  const leftPadding = 14;
+  const topPadding = 14;
+  const laneHeight = 29;
+  const stepX = 37;
+  const radius = 5;
 
   const colors = [
     "#667eea",
@@ -266,7 +266,7 @@ function renderTimeline(gitState) {
       const parentY = branchToY.get(parentBranch);
       if (x !== undefined && parentY !== undefined) {
         lines.push(
-          `<path class="timeline-path split" d="M ${x} ${parentY} C ${x} ${parentY + 10}, ${x} ${y - 10}, ${x} ${y}" />`
+          `<path class="timeline-path split" d="M ${x} ${parentY} C ${x} ${parentY + 9}, ${x} ${y - 9}, ${x} ${y}" />`
         );
       }
     }
@@ -311,13 +311,13 @@ function renderTimeline(gitState) {
     }
 
     if (headByBranch?.[gitState.currentBranch] === c.hash) {
-      labels.push(`<text class="timeline-label head" x="${x}" y="${y - 12}" text-anchor="middle">HEAD</text>`);
+      labels.push(`<text class="timeline-label head" x="${x}" y="${y - 10}" text-anchor="middle">HEAD</text>`);
     }
 
     const remoteHash = remoteHeadByBranch?.[`origin/${c.branch}`] ?? null;
     if (remoteHash && remoteHash === c.hash) {
       labels.push(
-        `<text class="timeline-label remote" x="${x}" y="${y - 12}" text-anchor="middle">REMOTE</text>`
+        `<text class="timeline-label remote" x="${x}" y="${y - 10}" text-anchor="middle">REMOTE</text>`
       );
     }
   });

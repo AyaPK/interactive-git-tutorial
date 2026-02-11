@@ -1,3 +1,7 @@
+html {
+    font-size: 95%;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -21,14 +25,14 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     padding: 1rem 2rem;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 17px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
     display: flex;
     align-items: center;
     gap: 2rem;
-    max-width: 1400px;
+    max-width: 1190px;
     margin: 0 auto;
 }
 
@@ -40,11 +44,11 @@ body {
 
 .progress-bar {
     flex: 1;
-    height: 8px;
+    height: 7px;
     background: #e2e8f0;
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
-    max-width: 300px;
+    max-width: 255px;
 }
 
 .progress-fill {
@@ -62,10 +66,10 @@ body {
 
 .main-content {
     display: flex;
-    flex: 1;
+    align-items: flex-start;
     gap: 1rem;
     padding: 1rem;
-    max-width: 1400px;
+    max-width: 1390px;
     margin: 0 auto;
     width: 100%;
 }
@@ -74,12 +78,13 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     margin: 0 1rem 1rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 3px 17px rgba(0, 0, 0, 0.1);
     padding: 1rem 1.25rem;
-    max-width: 1400px;
+    max-width: 1190px;
     width: calc(100% - 2rem);
     align-self: center;
+    height: 200px;
 }
 
 .timeline-header {
@@ -124,7 +129,7 @@ body {
 
 .timeline-graph {
     display: grid;
-    grid-template-columns: 140px 1fr;
+    grid-template-columns: 119px 1fr;
     align-items: start;
     gap: 0.75rem;
 }
@@ -146,7 +151,7 @@ body {
 
 .timeline-path {
     fill: none;
-    stroke-width: 3;
+    stroke-width: 2.5;
     stroke-linecap: round;
     opacity: 0.55;
 }
@@ -163,11 +168,11 @@ body {
 }
 
 .timeline-node {
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.12));
 }
 
 .timeline-label {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 800;
     letter-spacing: 0.02em;
 }
@@ -182,7 +187,7 @@ body {
 
 .timeline-row {
     display: grid;
-    grid-template-columns: 140px 1fr;
+    grid-template-columns: 119px 1fr;
     align-items: center;
     gap: 0.75rem;
     padding: 0.35rem 0;
@@ -209,13 +214,13 @@ body {
 .timeline-track {
     display: flex;
     align-items: center;
-    gap: 12px;
-    min-height: 28px;
+    gap: 10px;
+    min-height: 24px;
 }
 
 .timeline-slot {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -224,8 +229,8 @@ body {
 
 .timeline-line {
     position: absolute;
-    left: -6px;
-    right: -6px;
+    left: -5px;
+    right: -5px;
     top: 50%;
     height: 2px;
     transform: translateY(-50%);
@@ -237,8 +242,8 @@ body {
 .timeline-split {
     position: absolute;
     left: 50%;
-    top: -10px;
-    bottom: -10px;
+    top: -9px;
+    bottom: -9px;
     width: 2px;
     transform: translateX(-50%);
     background: rgba(74, 85, 104, 0.25);
@@ -247,8 +252,8 @@ body {
 }
 
 .timeline-dot {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 999px;
     background: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.18);
@@ -263,7 +268,7 @@ body {
 
 .timeline-head {
     position: absolute;
-    top: -8px;
+    top: -7px;
     font-size: 0.7rem;
     color: #4a5568;
     font-weight: 700;
@@ -272,7 +277,7 @@ body {
 
 .timeline-remote {
     position: absolute;
-    top: -8px;
+    top: -7px;
     font-size: 0.65rem;
     color: #805ad5;
     font-weight: 800;
@@ -281,16 +286,16 @@ body {
 }
 
 .sidebar {
-    width: 250px;
+    width: 213px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 17px rgba(0, 0, 0, 0.1);
 }
 
 .right-sidebar {
-    width: 300px;
+    width: 255px;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -330,8 +335,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background: #e2e8f0;
     font-size: 0.75rem;
@@ -357,9 +362,9 @@ body {
 .lesson-content {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 17px rgba(0, 0, 0, 0.1);
 }
 
 .lesson-header {
@@ -463,14 +468,14 @@ body {
 
 .terminal-container {
     background: #1a1a1a;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    flex: 0 0 360px;
+    box-shadow: 0 3px 17px rgba(0, 0, 0, 0.2);
+    flex: 0 0 306px;
     display: flex;
     flex-direction: column;
-    height: 460px;
-    min-height: 460px;
+    height: 391px;
+    min-height: 391px;
 }
 
 .terminal-header {
@@ -487,8 +492,8 @@ body {
 }
 
 .button {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
 }
 
@@ -516,6 +521,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    font-size: 90%;
 }
 
 .terminal-output {
@@ -548,7 +554,7 @@ body {
     border: none;
     color: #0f0;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
+    font-size: 12px;
     outline: none;
     flex: 1;
 }
@@ -556,9 +562,9 @@ body {
 .visual-panel {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 17px rgba(0, 0, 0, 0.1);
 }
 
 .panel-header h3 {
@@ -628,9 +634,9 @@ body {
 }
 
 .repo-action-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
     border: 1px solid #e2e8f0;
     background: #ffffff;
     color: #2d3748;
@@ -649,7 +655,7 @@ body {
 
 .file-list,
 .commit-list {
-    min-height: 60px;
+    min-height: 51px;
 }
 
 .file-item {
@@ -685,9 +691,9 @@ body {
     border: 1px solid #e2e8f0;
     background: #ffffff;
     color: #2d3748;
-    border-radius: 6px;
-    width: 26px;
-    height: 26px;
+    border-radius: 5px;
+    width: 22px;
+    height: 22px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -757,12 +763,12 @@ body {
 
 .modal-content {
     background: white;
-    border-radius: 12px;
-    max-width: 600px;
+    border-radius: 10px;
+    max-width: 510px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 17px 34px rgba(0, 0, 0, 0.2);
 }
 
 .modal-header {
@@ -913,7 +919,7 @@ body {
     border-radius: 4px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.875rem;
-    min-width: 150px;
+    min-width: 128px;
 }
 
 .command-item span {
