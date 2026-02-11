@@ -78,6 +78,8 @@ export function updateVisualPanel(gitState) {
   const workingFiles = document.getElementById("workingFiles");
   const stagedFiles = document.getElementById("stagedFiles");
   const commits = document.getElementById("commits");
+  const remoteCommits = document.getElementById("remoteCommits");
+  const remoteHeader = visualPanel?.querySelector(".remote-repository h4");
 
   if (gitState.workingDirectory.length > 0) {
     workingFiles.innerHTML = gitState.workingDirectory
@@ -114,6 +116,53 @@ export function updateVisualPanel(gitState) {
       .join("");
   } else {
     commits.innerHTML = '<div class="empty-state">No commits yet</div>';
+  }
+
+  if (remoteHeader) {
+    const remoteRef = `origin/${gitState.currentBranch}`;
+    remoteHeader.textContent = `Remote: ${remoteRef}`;
+  }
+
+  if (remoteCommits) {
+    if (!gitState.initialized) {
+      remoteCommits.innerHTML = '<div class="empty-state">Initialize repository to view remote</div>';
+    } else if (!gitState.remoteConnected) {
+      remoteCommits.innerHTML = '<div class="empty-state">No remote connected</div>';
+    } else {
+      const remoteRef = `origin/${gitState.currentBranch}`;
+      const remoteHead = gitState.remoteBranchHeads?.[remoteRef] ?? null;
+      if (!remoteHead) {
+        remoteCommits.innerHTML = '<div class="empty-state">No commits on remote</div>';
+      } else {
+        const commitsByHash = new Map((gitState.commits || []).map((c) => [c.hash, c]));
+        const reachable = new Set();
+        const stack = [remoteHead];
+        while (stack.length) {
+          const h = stack.pop();
+          if (!h || reachable.has(h)) continue;
+          reachable.add(h);
+          const c = commitsByHash.get(h);
+          if (c?.parents?.length) {
+            for (const p of c.parents) stack.push(p);
+          }
+        }
+        const list = (gitState.commits || [])
+          .filter((c) => reachable.has(c.hash) && c.branch === gitState.currentBranch)
+          .slice()
+          .reverse()
+          .map(
+            (commit) => `
+                      <div class="commit-item">
+                          <div class="commit-hash">${commit.hash}</div>
+                          <div class="commit-message">${commit.message}</div>
+                          <div class="commit-author">${commit.author} • ${commit.timestamp}</div>
+                      </div>
+                  `
+          )
+          .join("");
+        remoteCommits.innerHTML = list || '<div class="empty-state">No commits on remote</div>';
+      }
+    }
   }
 
   renderTimeline(gitState);

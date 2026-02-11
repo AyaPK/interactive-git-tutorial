@@ -211,6 +211,7 @@ export function handleGitCommand(gitState, subcommand, args) {
         output = "Initialized Git repository already exists.";
       } else {
         gitState.initialized = true;
+        gitState.remoteConnected = true;
         if (!gitState.branches) gitState.branches = [gitState.currentBranch];
         if (!gitState.branchHeads) gitState.branchHeads = { [gitState.currentBranch]: null };
         if (!gitState.remotes) gitState.remotes = ["origin"];
