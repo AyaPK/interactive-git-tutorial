@@ -146,6 +146,16 @@ export class GitTutorial {
       if (e.key === "Enter") {
         this.handleCommand(terminalInput.value);
         terminalInput.value = "";
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        const last = this.terminalHistory[this.terminalHistory.length - 1];
+        if (last) {
+          e.preventDefault();
+          terminalInput.value = last;
+          const end = terminalInput.value.length;
+          terminalInput.setSelectionRange(end, end);
+        }
       }
     });
 
