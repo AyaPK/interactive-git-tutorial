@@ -3,6 +3,7 @@ import { createInitialGitState } from "./gitState.js";
 import { handleGitCommand, showHelp } from "./gitCommands.js";
 import {
   addTerminalOutput,
+  applyReveals,
   clearTerminal,
   renderLesson,
   updateLessonNav,
@@ -451,6 +452,7 @@ export class GitTutorial {
     const subLesson = this.getSubLesson(this.currentLesson, this.currentSubLessonIndex);
     this.getObjectiveStates(this.currentLesson, this.currentSubLessonIndex);
     this.refreshLessonUI();
+    applyReveals(subLesson);
 
     if (subLesson.hint) {
       addTerminalOutput(`💡 Hint: ${subLesson.hint}`, "hint");

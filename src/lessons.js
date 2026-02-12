@@ -29,6 +29,7 @@ export const lessons = {
         description: `
                     <p>Before you can track changes, you need to initialize a Git repository.</p>
                 `,
+        reveals: ["rightSidebar"],
         objectives: [
           {
             title: "Run git init",
@@ -86,6 +87,7 @@ export const lessons = {
         description: `
                     <p>A commit records a snapshot of your staged changes with a message.</p>
                 `,
+        reveals: ["timelinePanel"],
         objectives: [
           {
             title: "Commit with a message",

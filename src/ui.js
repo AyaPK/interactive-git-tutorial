@@ -48,6 +48,18 @@ export function updateLessonNav(currentLesson) {
   });
 }
 
+export function applyReveals(subLesson) {
+  const ids = subLesson.reveals;
+  if (!Array.isArray(ids) || ids.length === 0) return;
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (!el.classList.contains("tutorial-hidden")) continue;
+    el.classList.remove("tutorial-hidden");
+    el.classList.add("tutorial-reveal");
+  }
+}
+
 export function updateVisualPanel(gitState) {
   const visualPanel = document.getElementById("visualPanel");
   const panelTitle = visualPanel?.querySelector(".panel-header h3");
