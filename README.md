@@ -163,7 +163,6 @@ title: git init & git status
 ---
 
 ### Sublesson: Initialize a repository
-Hint: Type 'git init'
 Reveals:
 - rightSidebar
 Objectives:
@@ -172,7 +171,6 @@ Objectives:
 Before you can track changes, you need to initialize a Git repository.
 
 ### Sublesson: Inspect repository status
-Hint: Type 'git status'
 Objectives:
 - Run git status | git status | On branch
 - See untracked files | git status | Untracked files:
