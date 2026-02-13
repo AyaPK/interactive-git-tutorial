@@ -95,6 +95,8 @@ function parseLessonMarkdown(md) {
   const lines = body.split(/\r?\n/);
   // Capture optional Further reading section (content under '### Further reading' until next '### ' or EOF)
   let furtherReadingHtml = '';
+  let furtherButtonHtml = '';
+  let furtherButtonText = '';
   (function extractFurtherReading() {
     let start = -1;
     for (let i = 0; i < lines.length; i++) {
@@ -107,6 +109,32 @@ function parseLessonMarkdown(md) {
     }
     const fr = lines.slice(start, end).join('\n').trim();
     furtherReadingHtml = mdToHtml(fr);
+  })();
+
+  // Capture optional Further reading button section
+  (function extractFurtherReadingButton() {
+    let start = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (/^###\s+Further\s+reading\s+button\s*$/i.test(lines[i].trim())) { start = i + 1; break; }
+    }
+    if (start === -1) return;
+    let end = lines.length;
+    for (let j = start; j < lines.length; j++) {
+      if (/^###\s+/.test(lines[j])) { end = j; break; }
+    }
+    const raw = lines.slice(start, end).join('\n');
+    const fbLines = raw.split(/\r?\n/);
+    // Look for optional 'Label: <text>' (preferred) or 'Text: <text>' to customize button label
+    for (let i = 0; i < fbLines.length; i++) {
+      const m = fbLines[i].match(/^\s*(Label|Text)\s*:\s*(.+)$/i);
+      if (m) {
+        furtherButtonText = m[2].trim();
+        fbLines.splice(i, 1); // remove label line from content
+        break;
+      }
+    }
+    const fb = fbLines.join('\n').trim();
+    furtherButtonHtml = mdToHtml(fb);
   })();
   // Split into sublesson blocks by heading line starting with '### Sublesson:'
   const blocks = [];
@@ -188,7 +216,8 @@ function parseLessonMarkdown(md) {
     return { title: b.title, description, objectives, hint, reveals };
   });
 
-  return { title: lessonTitle, subLessons, furtherReadingHtml };
+  const showFurtherButton = Boolean(furtherButtonHtml || furtherButtonText);
+  return { title: lessonTitle, subLessons, furtherReadingHtml, furtherButtonHtml, furtherButtonText, showFurtherButton };
 }
 
 export async function loadLessons() {

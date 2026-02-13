@@ -472,6 +472,7 @@ export class GitTutorial {
     this.currentSubLessonIndex = subLessonIndex;
 
     const subLesson = this.getSubLesson(this.currentLesson, this.currentSubLessonIndex);
+    const lesson = this.getLesson(this.currentLesson);
     this.getObjectiveStates(this.currentLesson, this.currentSubLessonIndex);
     this.refreshLessonUI();
     // Hide inline post-lesson panel when loading a lesson and reset pending state
@@ -480,6 +481,24 @@ export class GitTutorial {
     const postBody = document.getElementById("postLessonBody");
     if (postBody) postBody.innerHTML = '<p>Review key concepts from this lesson. When you\'re ready, continue to the next lesson.</p>';
     this.nextLessonPending = false;
+
+    // Configure per-lesson Further reading button and modal content
+    const frBtn = document.getElementById("furtherReadingBtn");
+    const frModal = document.getElementById("furtherReadingModal");
+    const frContent = frModal?.querySelector(".reading-content");
+    if (frBtn) {
+      frBtn.textContent = lesson?.furtherButtonText || '📘 Further reading';
+      if (lesson?.showFurtherButton) {
+        frBtn.classList.remove("tutorial-hidden");
+      } else {
+        frBtn.classList.add("tutorial-hidden");
+        // also ensure modal is closed if it was open
+        if (frModal) frModal.classList.remove("active");
+      }
+    }
+    if (frContent) {
+      frContent.innerHTML = lesson?.furtherButtonHtml || '<p>No additional resources for this lesson.</p>';
+    }
     applyReveals(subLesson);
 
     if (subLesson.hint) {
