@@ -31,6 +31,7 @@ export class GitTutorial {
     this.lessons = lessons;
 
     this.objectiveCompletion = {};
+    this.nextLessonPending = false;
 
     this.init();
   }
@@ -142,6 +143,8 @@ export class GitTutorial {
     const cancelDeleteFile = document.getElementById("cancelDeleteFile");
     const confirmDeleteFile = document.getElementById("confirmDeleteFile");
     const deleteFileName = document.getElementById("deleteFileName");
+    const postLessonPanel = document.getElementById("postLessonPanel");
+    const nextLessonBtn = document.getElementById("nextLessonBtn");
 
     terminalInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
@@ -190,13 +193,33 @@ export class GitTutorial {
     }
 
     if (closeFurtherReadingBottom) {
-      closeFurtherReadingBottom.addEventListener("click", closeFurtherReadingModal);
+      closeFurtherReadingBottom.addEventListener("click", () => {
+        if (furtherReadingModal) furtherReadingModal.classList.remove("active");
+        if (this.nextLessonPending) {
+          this.nextLessonPending = false;
+          // reset button label
+          closeFurtherReadingBottom.textContent = "Got it";
+          if (this.currentLesson < this.totalLessons) {
+            this.loadLesson(this.currentLesson + 1, 0);
+          }
+        }
+      });
     }
 
     if (furtherReadingModal) {
       furtherReadingModal.addEventListener("click", (e) => {
         if (e.target === furtherReadingModal) {
           closeFurtherReadingModal();
+        }
+      });
+    }
+
+    if (nextLessonBtn) {
+      nextLessonBtn.addEventListener("click", () => {
+        if (postLessonPanel) postLessonPanel.classList.add("tutorial-hidden");
+        if (this.nextLessonPending && this.currentLesson < this.totalLessons) {
+          this.nextLessonPending = false;
+          this.loadLesson(this.currentLesson + 1, 0);
         }
       });
     }
@@ -452,6 +475,10 @@ export class GitTutorial {
     const subLesson = this.getSubLesson(this.currentLesson, this.currentSubLessonIndex);
     this.getObjectiveStates(this.currentLesson, this.currentSubLessonIndex);
     this.refreshLessonUI();
+    // Hide inline post-lesson panel when loading a lesson and reset pending state
+    const postPanel = document.getElementById("postLessonPanel");
+    if (postPanel) postPanel.classList.add("tutorial-hidden");
+    this.nextLessonPending = false;
     applyReveals(subLesson);
 
     if (subLesson.hint) {
@@ -560,8 +587,13 @@ export class GitTutorial {
       }
 
       if (this.currentLesson < this.totalLessons) {
-        addTerminalOutput("🎉 Lesson complete! Moving to the next lesson.", "success");
-        this.loadLesson(this.currentLesson + 1, 0);
+        addTerminalOutput("🎉 Lesson complete!", "success");
+        const pl = document.getElementById("postLessonPanel");
+        if (pl) {
+          pl.classList.remove("tutorial-hidden");
+          pl.classList.add("tutorial-reveal");
+        }
+        this.nextLessonPending = true;
         return;
       }
 
