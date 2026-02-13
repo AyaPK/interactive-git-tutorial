@@ -1,4 +1,3 @@
-import { lessons, totalLessons } from "./lessons.js";
 import { createInitialGitState } from "./gitState.js";
 import { handleGitCommand, showHelp } from "./gitCommands.js";
 import {
@@ -22,13 +21,13 @@ function tokenize(input) {
 }
 
 export class GitTutorial {
-  constructor() {
+  constructor({ lessons, totalLessons } = {}) {
     this.currentLesson = 1;
     this.currentSubLessonIndex = 0;
-    this.totalLessons = totalLessons;
+    this.totalLessons = totalLessons ?? 0;
     this.terminalHistory = [];
     this.gitState = createInitialGitState();
-    this.lessons = lessons;
+    this.lessons = lessons ?? {};
 
     this.objectiveCompletion = {};
     this.nextLessonPending = false;
@@ -478,6 +477,8 @@ export class GitTutorial {
     // Hide inline post-lesson panel when loading a lesson and reset pending state
     const postPanel = document.getElementById("postLessonPanel");
     if (postPanel) postPanel.classList.add("tutorial-hidden");
+    const postBody = document.getElementById("postLessonBody");
+    if (postBody) postBody.innerHTML = '<p>Review key concepts from this lesson. When you\'re ready, continue to the next lesson.</p>';
     this.nextLessonPending = false;
     applyReveals(subLesson);
 
@@ -592,6 +593,10 @@ export class GitTutorial {
         if (pl) {
           pl.classList.remove("tutorial-hidden");
           pl.classList.add("tutorial-reveal");
+        }
+        const bodyEl = document.getElementById("postLessonBody");
+        if (bodyEl && lesson?.furtherReadingHtml) {
+          bodyEl.innerHTML = lesson.furtherReadingHtml;
         }
         this.nextLessonPending = true;
         return;

@@ -285,6 +285,15 @@ body {
     letter-spacing: 0.02em;
 }
 
+.post-lesson-panel h3 {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.post-lesson-panel p {
+    margin: 20px;
+}
+
 .sidebar {
     width: 213px;
     background: rgba(255, 255, 255, 0.95);
