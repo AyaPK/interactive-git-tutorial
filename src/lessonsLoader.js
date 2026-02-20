@@ -30,11 +30,14 @@ function mdToHtml(md) {
   let inUl = false;
 
   const renderInline = (text) => {
-    // Convert Markdown links [text](url) to anchors
-    return escapeHtml(text).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, href) => {
-      const safeHref = href.replace(/"/g, '%22');
-      return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`;
-    });
+    const escaped = escapeHtml(text);
+    return escaped
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, href) => {
+        const safeHref = href.replace(/&quot;/g, '%22');
+        return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+      });
   };
 
   const flushP = () => {
@@ -93,6 +96,23 @@ function parseLessonMarkdown(md) {
   const { meta, body } = parseFrontmatter(md);
   const lessonTitle = meta.title || '';
   const lines = body.split(/\r?\n/);
+
+  // Capture optional Theory section (content under '### Theory' until next '### ' or EOF)
+  let theoryHtml = '';
+  (function extractTheory() {
+    let start = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (/^###\s+Theory\s*$/i.test(lines[i].trim())) { start = i + 1; break; }
+    }
+    if (start === -1) return;
+    let end = lines.length;
+    for (let j = start; j < lines.length; j++) {
+      if (/^###\s+/.test(lines[j])) { end = j; break; }
+    }
+    const th = lines.slice(start, end).join('\n').trim();
+    theoryHtml = mdToHtml(th);
+  })();
+
   // Capture optional Further reading section (content under '### Further reading' until next '### ' or EOF)
   let furtherReadingHtml = '';
   let furtherButtonHtml = '';
@@ -137,20 +157,26 @@ function parseLessonMarkdown(md) {
     furtherButtonHtml = mdToHtml(fb);
   })();
   // Split into sublesson blocks by heading line starting with '### Sublesson:'
+  // Skip Theory, Further reading, and Further reading button sections entirely.
   const blocks = [];
   let current = null;
+  let skipSection = false;
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (/^###\s+Further\s+reading\s*$/i.test(line.trim())) {
-      // Stop collecting sublesson content at the Further reading section
-      break;
+    if (/^###\s+Further\s+reading\s*$/i.test(line.trim()) ||
+        /^###\s+Further\s+reading\s+button\s*$/i.test(line.trim()) ||
+        /^###\s+Theory\s*$/i.test(line.trim())) {
+      skipSection = true;
+      continue;
     }
     const m = line.match(/^###\s+Sublesson:\s*(.+)$/);
     if (m) {
+      skipSection = false;
       if (current) blocks.push(current);
       current = { title: m[1].trim(), meta: {}, content: [] };
       continue;
     }
+    if (skipSection) continue;
     if (current) current.content.push(line);
   }
   if (current) blocks.push(current);
@@ -217,7 +243,7 @@ function parseLessonMarkdown(md) {
   });
 
   const showFurtherButton = Boolean(furtherButtonHtml || furtherButtonText);
-  return { title: lessonTitle, subLessons, furtherReadingHtml, furtherButtonHtml, furtherButtonText, showFurtherButton };
+  return { title: lessonTitle, subLessons, theoryHtml, furtherReadingHtml, furtherButtonHtml, furtherButtonText, showFurtherButton };
 }
 
 export async function loadLessons() {
