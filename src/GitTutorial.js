@@ -3,8 +3,10 @@ import { handleGitCommand, showHelp } from "./gitCommands.js";
 import {
   addTerminalOutput,
   applyReveals,
+  clearNotifications,
   clearTerminal,
   renderLesson,
+  showNotification,
   updateLessonNav,
   updateProgress,
   updateVisualPanel
@@ -532,10 +534,11 @@ export class GitTutorial {
     if (frContent) {
       frContent.innerHTML = lesson?.furtherButtonHtml || '<p>No additional resources for this lesson.</p>';
     }
+    clearNotifications();
     applyReveals(subLesson);
 
     if (subLesson.hint) {
-      addTerminalOutput(`💡 Hint: ${subLesson.hint}`, "hint");
+      showNotification(subLesson.hint, "hint");
     }
   }
 
@@ -620,7 +623,7 @@ export class GitTutorial {
       if (!output.includes(obj.outputIncludes)) return;
       objectiveStates[idx] = true;
       changed = true;
-      addTerminalOutput(`✅ Objective complete: ${obj.title}`, "success");
+      showNotification(`Objective complete: ${obj.title}`, "success");
     });
 
     if (changed) {
@@ -631,7 +634,7 @@ export class GitTutorial {
     if (!allDone) return;
 
     setTimeout(() => {
-      addTerminalOutput("🎉 Sub-lesson complete!", "success");
+      showNotification("Sub-lesson complete!", "complete");
 
       const nextSubIndex = this.currentSubLessonIndex + 1;
       if (nextSubIndex < lesson.subLessons.length) {
@@ -640,7 +643,7 @@ export class GitTutorial {
       }
 
       if (this.currentLesson < this.totalLessons) {
-        addTerminalOutput("🎉 Lesson complete!", "success");
+        showNotification("Lesson complete!", "complete");
         const pl = document.getElementById("postLessonPanel");
         if (pl) {
           pl.classList.remove("tutorial-hidden");
@@ -654,7 +657,7 @@ export class GitTutorial {
         return;
       }
 
-      addTerminalOutput("🎊 Congratulations! You've completed all lessons!", "success");
+      showNotification("🎊 Congratulations! You've completed all lessons!", "complete");
     }, 600);
   }
 }

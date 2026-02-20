@@ -1,3 +1,21 @@
+const NOTIF_ICONS = { hint: "💡", success: "✅", complete: "🎉" };
+
+export function showNotification(message, type = "success") {
+  const area = document.getElementById("notificationArea");
+  if (!area) return;
+  const el = document.createElement("div");
+  el.className = `notification notif-${type}`;
+  const icon = NOTIF_ICONS[type] ?? "";
+  el.innerHTML = `${icon ? `<span class="notification-icon">${icon}</span>` : ""}<span>${message}</span>`;
+  area.appendChild(el);
+  area.scrollTop = area.scrollHeight;
+}
+
+export function clearNotifications() {
+  const area = document.getElementById("notificationArea");
+  if (area) area.innerHTML = "";
+}
+
 export function addTerminalOutput(text, className = "") {
   const terminalOutput = document.getElementById("terminalOutput");
   const line = document.createElement("div");
