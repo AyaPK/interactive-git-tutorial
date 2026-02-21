@@ -119,7 +119,7 @@ export function updateVisualPanel(gitState) {
       .map((file) => {
         const isModified = modified.includes(file);
         const modBadge = isModified ? `<span class="file-modified-badge">M</span>` : "";
-        return `<div class="file-item file-row${isModified ? " file-modified" : ""}"><span class="file-name">${escapeHtml(file)}${modBadge}</span><span class="file-actions"><button class="file-action-btn" type="button" data-action="edit" data-file="${escapeHtml(file)}" title="Edit">✏</button><button class="file-action-btn" type="button" data-action="rename" data-file="${escapeHtml(file)}" title="Rename">✎</button><button class="file-action-btn file-action-danger" type="button" data-action="delete" data-file="${escapeHtml(file)}" title="Delete">🗑</button></span></div>`;
+        return `<div class="file-item file-row${isModified ? " file-modified" : ""}"><span class="file-name">${escapeHtml(file)}${modBadge}</span></div>`;
       })
       .join("");
   } else {
@@ -200,6 +200,61 @@ export function updateVisualPanel(gitState) {
   }
 
   renderTimeline(gitState);
+  renderFileSystem(gitState);
+}
+
+function renderFileSystem(gitState) {
+  const container = document.getElementById("fileSystemList");
+  if (!container) return;
+
+  const committed = new Set(gitState.commits.flatMap((c) => c.files ?? []));
+  const staged = new Set(gitState.stagedFiles ?? []);
+  const modified = new Set(gitState.modifiedFiles ?? []);
+  const untracked = new Set(gitState.workingDirectory ?? []);
+
+  const allFiles = Array.from(new Set([
+    ...untracked,
+    ...staged,
+    ...modified,
+    ...committed,
+  ])).sort();
+
+  if (allFiles.length === 0) {
+    container.innerHTML = '<div class="empty-state">No files yet — create one with the + button above</div>';
+    return;
+  }
+
+  container.innerHTML = allFiles.map((file) => {
+    let statusClass = "fs-status-committed";
+    let statusLabel = "clean";
+    let canRename = untracked.has(file) || modified.has(file);
+    let canDelete = untracked.has(file) || modified.has(file);
+
+    if (untracked.has(file)) {
+      statusClass = "fs-status-untracked";
+      statusLabel = "untracked";
+    } else if (modified.has(file)) {
+      statusClass = "fs-status-modified";
+      statusLabel = "modified";
+    } else if (staged.has(file)) {
+      statusClass = "fs-status-staged";
+      statusLabel = "staged";
+    } else if (committed.has(file)) {
+      statusClass = "fs-status-committed";
+      statusLabel = "clean";
+    }
+
+    const editBtn = `<button class="file-action-btn" type="button" data-action="edit" data-file="${escapeHtml(file)}" title="Edit">✏</button>`;
+    const renameBtn = canRename ? `<button class="file-action-btn" type="button" data-action="rename" data-file="${escapeHtml(file)}" title="Rename">✎</button>` : "";
+    const deleteBtn = canDelete ? `<button class="file-action-btn file-action-danger" type="button" data-action="delete" data-file="${escapeHtml(file)}" title="Delete">🗑</button>` : "";
+
+    return `<div class="fs-file-row">
+      <span class="fs-file-icon">📄</span>
+      <span class="fs-file-name">${escapeHtml(file)}</span>
+      <span class="fs-status-badge ${statusClass}">${statusLabel}</span>
+      <span class="file-actions">${editBtn}${renameBtn}${deleteBtn}</span>
+    </div>`;
+  }).join("");
 }
 
 function renderTimeline(gitState) {

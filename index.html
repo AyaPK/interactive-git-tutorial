@@ -125,6 +125,17 @@
             </section>
 
             <aside class="right-sidebar tutorial-hidden" id="rightSidebar">
+                <div class="visual-panel" id="fileSystemPanel">
+                    <div class="panel-header fs-panel-header">
+                        <h3>🗂 Local Files</h3>
+                        <button class="repo-action-btn" id="createFileBtn" type="button" title="Create file">+</button>
+                    </div>
+                    <div class="panel-content">
+                        <div id="fileSystemList">
+                            <div class="empty-state">No files</div>
+                        </div>
+                    </div>
+                </div>
                 <div class="visual-panel" id="visualPanel">
                     <div class="panel-header">
                         <h3>📊 Repository State</h3>
@@ -134,7 +145,6 @@
                             <div class="working-directory">
                                 <div class="repo-section-header">
                                     <h4>Working Directory</h4>
-                                    <button class="repo-action-btn" id="createFileBtn" type="button" title="Create file">+</button>
                                 </div>
                                 <div class="file-list" id="workingFiles">
                                     <div class="file-item">README.md</div>

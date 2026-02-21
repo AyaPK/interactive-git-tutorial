@@ -1046,6 +1046,78 @@ body {
     line-height: 1.4;
 }
 
+/* ── File system panel ─────────────────────────────────────────────────────── */
+
+.fs-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.fs-panel-header h3 {
+    margin-bottom: 0;
+}
+
+.fs-file-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.4rem;
+    border-radius: 5px;
+    font-size: 0.82rem;
+    transition: background 0.15s;
+}
+
+.fs-file-row:hover {
+    background: #edf2f7;
+}
+
+.fs-file-icon {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    line-height: 1;
+}
+
+.fs-file-name {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    color: #2d3748;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fs-status-badge {
+    flex-shrink: 0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    border-radius: 3px;
+    padding: 1px 5px;
+    text-transform: uppercase;
+}
+
+.fs-status-untracked {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.fs-status-modified {
+    background: #feebc8;
+    color: #7b341e;
+}
+
+.fs-status-staged {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.fs-status-committed {
+    background: #ebf4ff;
+    color: #2a4365;
+}
+
 /* ── Modified file indicator ───────────────────────────────────────────────── */
 
 .file-modified {

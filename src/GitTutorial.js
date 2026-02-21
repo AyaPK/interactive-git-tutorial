@@ -41,6 +41,7 @@ export class GitTutorial {
     return (
       this.gitState.workingDirectory.includes(name) ||
       this.gitState.stagedFiles.includes(name) ||
+      (this.gitState.modifiedFiles ?? []).includes(name) ||
       this.gitState.commits.some((c) => c.files?.includes?.(name))
     );
   }
@@ -145,9 +146,19 @@ export class GitTutorial {
     return { output: `Deleted file '${name}'`, success: true };
   }
 
+  getAllFiles() {
+    const committed = this.gitState.commits.flatMap((c) => c.files ?? []);
+    const all = [
+      ...this.gitState.workingDirectory,
+      ...this.gitState.stagedFiles,
+      ...(this.gitState.modifiedFiles ?? []),
+      ...committed,
+    ];
+    return Array.from(new Set(all));
+  }
+
   listFiles() {
-    const files = [...this.gitState.workingDirectory, ...this.gitState.stagedFiles];
-    const unique = Array.from(new Set(files));
+    const unique = this.getAllFiles();
     if (unique.length === 0) {
       return { output: "(no files)", success: true };
     }
@@ -403,16 +414,14 @@ export class GitTutorial {
       });
     }
 
-    if (workingFiles) {
-      workingFiles.addEventListener("click", (e) => {
+    const fileSystemList = document.getElementById("fileSystemList");
+    if (fileSystemList) {
+      fileSystemList.addEventListener("click", (e) => {
         const btn = e.target?.closest?.("button[data-action]");
         if (!btn) return;
         const action = btn.getAttribute("data-action");
         const file = btn.getAttribute("data-file");
         if (!action || !file) return;
-        const inWd = this.gitState.workingDirectory.includes(file);
-        const inModified = Array.isArray(this.gitState.modifiedFiles) && this.gitState.modifiedFiles.includes(file);
-        if (!inWd && !inModified) return;
         if (action === "edit") {
           this.openFileEditor(file);
         }

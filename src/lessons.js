@@ -67,12 +67,13 @@ export const lessons = {
         title: "Stage a file",
         description: `
                     <p><code>git add</code> moves changes into the staging area so they can be committed.</p>
+                    <p>Like real git, the command produces no output on success — check the Repository State panel to confirm the file moved to the staging area.</p>
                 `,
         objectives: [
           {
             title: "Stage README.md",
             commandIncludes: "git add README.md",
-            outputIncludes: "Added"
+            outputIncludes: ""
           }
         ],
         hint: "Type 'git add README.md'"
@@ -103,10 +104,26 @@ export const lessons = {
     title: "git push & git pull",
     subLessons: [
       {
+        title: "Connect a remote",
+        description: `
+                    <p>Before you can push, you need to tell git where to send your commits.</p>
+                    <p><code>git remote add origin &lt;url&gt;</code> registers a remote named <code>origin</code>.</p>
+                    <p>In this tutorial the URL doesn't need to be real — just run the command to register it.</p>
+                `,
+        objectives: [
+          {
+            title: "Add a remote named origin",
+            commandIncludes: "git remote add origin",
+            outputIncludes: "Remote repository added"
+          }
+        ],
+        hint: "Try: git remote add origin https://github.com/you/repo.git"
+      },
+      {
         title: "Push changes",
         description: `
-                    <p><code>git push</code> uploads your commits to a remote repository.</p>
-                    <p>In real projects, you usually need to set up a remote like <code>origin</code> first. In this tutorial, pushing works automatically so you can focus on the workflow.</p>
+                    <p><code>git push</code> uploads your local commits to the remote repository.</p>
+                    <p>After pushing, <code>origin/main</code> will point to the same commit as your local <code>main</code>.</p>
                 `,
         objectives: [
           {
@@ -138,23 +155,35 @@ export const lessons = {
     title: "Branching Basics",
     subLessons: [
       {
-        title: "Create and switch branches",
+        title: "Create a branch",
         description: `
                     <p>Branches let you work on changes without affecting your main line of development.</p>
+                    <p><code>git branch &lt;name&gt;</code> creates a new branch. Like real git, it produces no output on success.</p>
+                    <p>You can also use <code>git checkout -b &lt;name&gt;</code> to create <em>and</em> switch in one step.</p>
                 `,
         objectives: [
           {
-            title: "Create a branch",
-            commandIncludes: "git branch",
-            outputIncludes: "Created branch"
-          },
+            title: "Create a branch named 'feature'",
+            commandIncludes: "git branch feature",
+            outputIncludes: ""
+          }
+        ],
+        hint: "Try: git branch feature"
+      },
+      {
+        title: "Switch branches",
+        description: `
+                    <p>Use <code>git checkout &lt;branch&gt;</code> to switch to an existing branch.</p>
+                    <p>Tip: <code>git checkout -b &lt;name&gt;</code> creates and switches in one command.</p>
+                `,
+        objectives: [
           {
-            title: "Switch branches",
-            commandIncludes: "git checkout",
+            title: "Switch to the 'feature' branch",
+            commandIncludes: "git checkout feature",
             outputIncludes: "Switched to branch"
           }
         ],
-        hint: "Try: git branch feature then git checkout feature"
+        hint: "Try: git checkout feature"
       }
     ]
   },
