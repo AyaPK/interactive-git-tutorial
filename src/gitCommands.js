@@ -8,6 +8,7 @@ export function showHelp() {
   ls                - List files
   touch <file>      - Create a new file
   mv <old> <new>    - Rename a file
+  edit <file>       - Open the file editor
   
 Git Commands:
   git init          - Initialize a new Git repository
@@ -37,14 +38,23 @@ export function getGitStatus(gitState) {
     output += "\tnew file:   " + gitState.stagedFiles.join("\n\tnew file:   ") + "\n";
   }
 
-  if (gitState.workingDirectory.length > 0) {
+  const modified = Array.isArray(gitState.modifiedFiles) ? gitState.modifiedFiles : [];
+  if (modified.length > 0) {
     if (gitState.stagedFiles.length > 0) output += "\n";
-    output += "Untracked files:\n";
-    output += '  (use "git add <file>..." to include in what will be committed)\n';
-    output += "\t" + gitState.workingDirectory.join("\n\t") + "\n";
+    output += "Changes not staged for commit:\n";
+    output += '  (use "git add <file>..." to update what will be committed)\n';
+    output += "\tmodified:   " + modified.join("\n\tmodified:   ") + "\n";
   }
 
-  if (gitState.stagedFiles.length === 0 && gitState.workingDirectory.length === 0) {
+  const untracked = gitState.workingDirectory.filter((f) => !modified.includes(f));
+  if (untracked.length > 0) {
+    if (gitState.stagedFiles.length > 0 || modified.length > 0) output += "\n";
+    output += "Untracked files:\n";
+    output += '  (use "git add <file>..." to include in what will be committed)\n';
+    output += "\t" + untracked.join("\n\t") + "\n";
+  }
+
+  if (gitState.stagedFiles.length === 0 && gitState.workingDirectory.length === 0 && modified.length === 0) {
     output += "nothing to commit, working tree clean";
   }
 
@@ -71,17 +81,28 @@ function handleGitAdd(gitState, args) {
 
   const filesToAdd = args.join(" ");
   const addedFiles = [];
+  if (!Array.isArray(gitState.modifiedFiles)) gitState.modifiedFiles = [];
 
   if (filesToAdd === ".") {
     addedFiles.push(...gitState.workingDirectory);
     gitState.stagedFiles.push(...gitState.workingDirectory);
     gitState.workingDirectory = [];
+    addedFiles.push(...gitState.modifiedFiles.filter((f) => !addedFiles.includes(f)));
+    gitState.stagedFiles.push(...gitState.modifiedFiles.filter((f) => !gitState.stagedFiles.includes(f)));
+    gitState.modifiedFiles = [];
   } else {
     for (const file of args) {
-      const index = gitState.workingDirectory.indexOf(file);
-      if (index !== -1) {
-        gitState.workingDirectory.splice(index, 1);
+      const wdIdx = gitState.workingDirectory.indexOf(file);
+      if (wdIdx !== -1) {
+        gitState.workingDirectory.splice(wdIdx, 1);
         gitState.stagedFiles.push(file);
+        addedFiles.push(file);
+        continue;
+      }
+      const modIdx = gitState.modifiedFiles.indexOf(file);
+      if (modIdx !== -1) {
+        gitState.modifiedFiles.splice(modIdx, 1);
+        if (!gitState.stagedFiles.includes(file)) gitState.stagedFiles.push(file);
         addedFiles.push(file);
       }
     }
@@ -245,6 +266,10 @@ export function handleGitCommand(gitState, subcommand, args) {
           if (Array.isArray(gitState.workingDirectory) && gitState.workingDirectory.length > 0) {
             gitState.stagedFiles.push(...gitState.workingDirectory);
             gitState.workingDirectory = [];
+          }
+          if (Array.isArray(gitState.modifiedFiles) && gitState.modifiedFiles.length > 0) {
+            gitState.stagedFiles.push(...gitState.modifiedFiles.filter((f) => !gitState.stagedFiles.includes(f)));
+            gitState.modifiedFiles = [];
           }
         }
 

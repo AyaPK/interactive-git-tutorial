@@ -164,7 +164,7 @@
                 </div>
             </aside>
         </main>
-
+<!-- 
         <section class="timeline-panel tutorial-hidden" id="timelinePanel">
             <div class="timeline-header">
                 <h3>🌿 Timeline</h3>
@@ -174,7 +174,7 @@
                 <div class="timeline-empty" id="timelineEmpty">No commits yet</div>
                 <div class="timeline-rows" id="timelineRows"></div>
             </div>
-        </section>
+        </section> -->
 
         <div class="help-modal" id="helpModal">
             <div class="modal-content">
@@ -280,6 +280,39 @@
                     <div class="modal-actions">
                         <button class="secondary-btn" id="cancelDeleteFile" type="button">Cancel</button>
                         <button class="primary-btn danger-btn" id="confirmDeleteFile" type="button">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-modal file-editor-modal" id="fileEditorModal">
+            <div class="modal-content file-editor-content">
+                <div class="modal-header">
+                    <div class="file-editor-header-left">
+                        <span class="file-editor-icon">📄</span>
+                        <h3 id="fileEditorTitle">file.txt</h3>
+                    </div>
+                    <div class="file-editor-header-right">
+                        <span class="file-editor-hint">Ctrl+S to save · Esc to close</span>
+                        <button class="close-btn" id="closeFileEditor">&times;</button>
+                    </div>
+                </div>
+                <div class="modal-body file-editor-body">
+                    <textarea
+                        class="file-editor-textarea"
+                        id="fileEditorTextarea"
+                        spellcheck="false"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="off"
+                        placeholder="File is empty. Start typing to add content..."
+                    ></textarea>
+                </div>
+                <div class="file-editor-footer">
+                    <span class="file-editor-footer-note">Plain text only — content is never executed</span>
+                    <div class="modal-actions">
+                        <button class="secondary-btn" id="cancelFileEditor" type="button">Discard</button>
+                        <button class="primary-btn" id="saveFileEditor" type="button">Save</button>
                     </div>
                 </div>
             </div>

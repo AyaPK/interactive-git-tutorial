@@ -12,7 +12,12 @@ export function createInitialGitState() {
     remotes: ["origin"],
     remoteBranches: ["origin/main"],
     remoteBranchHeads: { "origin/main": null },
-    remoteConnected: false
+    remoteConnected: false,
+    fileContents: {
+      "README.md": "# My Project\n\nA short description of this project.",
+      "app.js": "// Entry point\nconsole.log('Hello, world!');"
+    },
+    modifiedFiles: []
   };
 }
 

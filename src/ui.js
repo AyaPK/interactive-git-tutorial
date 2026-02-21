@@ -111,12 +111,16 @@ export function updateVisualPanel(gitState) {
   const remoteCommits = document.getElementById("remoteCommits");
   const remoteHeader = visualPanel?.querySelector(".remote-repository h4");
 
-  if (gitState.workingDirectory.length > 0) {
-    workingFiles.innerHTML = gitState.workingDirectory
-      .map(
-        (file) =>
-          `<div class="file-item file-row"><span class="file-name">${file}</span><span class="file-actions"><button class="file-action-btn" type="button" data-action="rename" data-file="${file}" title="Rename">✎</button><button class="file-action-btn file-action-danger" type="button" data-action="delete" data-file="${file}" title="Delete">🗑</button></span></div>`
-      )
+  const modified = Array.isArray(gitState.modifiedFiles) ? gitState.modifiedFiles : [];
+  const allWorkingFiles = Array.from(new Set([...gitState.workingDirectory, ...modified]));
+
+  if (allWorkingFiles.length > 0) {
+    workingFiles.innerHTML = allWorkingFiles
+      .map((file) => {
+        const isModified = modified.includes(file);
+        const modBadge = isModified ? `<span class="file-modified-badge">M</span>` : "";
+        return `<div class="file-item file-row${isModified ? " file-modified" : ""}"><span class="file-name">${escapeHtml(file)}${modBadge}</span><span class="file-actions"><button class="file-action-btn" type="button" data-action="edit" data-file="${escapeHtml(file)}" title="Edit">✏</button><button class="file-action-btn" type="button" data-action="rename" data-file="${escapeHtml(file)}" title="Rename">✎</button><button class="file-action-btn file-action-danger" type="button" data-action="delete" data-file="${escapeHtml(file)}" title="Delete">🗑</button></span></div>`;
+      })
       .join("");
   } else {
     workingFiles.innerHTML = '<div class="empty-state">No untracked files</div>';

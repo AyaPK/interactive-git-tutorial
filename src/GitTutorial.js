@@ -55,7 +55,51 @@ export class GitTutorial {
     }
 
     this.gitState.workingDirectory.push(name);
+    if (!this.gitState.fileContents) this.gitState.fileContents = {};
+    this.gitState.fileContents[name] = "";
     return { output: `Created file '${name}'`, success: true };
+  }
+
+  openFileEditor(name) {
+    if (!this.fileExists(name)) {
+      return { output: `edit: '${name}': No such file`, success: false };
+    }
+    const content = (this.gitState.fileContents ?? {})[name] ?? "";
+    this._openEditorModal(name, content);
+    return { output: `Opened '${name}' in editor`, success: true };
+  }
+
+  _openEditorModal(name, content) {
+    const modal = document.getElementById("fileEditorModal");
+    const titleEl = document.getElementById("fileEditorTitle");
+    const textarea = document.getElementById("fileEditorTextarea");
+    if (!modal || !titleEl || !textarea) return;
+    titleEl.textContent = name;
+    textarea.value = content;
+    modal.dataset.file = name;
+    modal.classList.add("active");
+    textarea.focus();
+  }
+
+  _saveEditorModal() {
+    const modal = document.getElementById("fileEditorModal");
+    const textarea = document.getElementById("fileEditorTextarea");
+    if (!modal || !textarea) return;
+    const name = modal.dataset.file;
+    if (!name) return;
+    const newContent = textarea.value;
+    if (!this.gitState.fileContents) this.gitState.fileContents = {};
+    const oldContent = this.gitState.fileContents[name] ?? null;
+    this.gitState.fileContents[name] = newContent;
+    if (!Array.isArray(this.gitState.modifiedFiles)) this.gitState.modifiedFiles = [];
+    const isTracked = !this.gitState.workingDirectory.includes(name);
+    const alreadyModified = this.gitState.modifiedFiles.includes(name);
+    if (isTracked && !alreadyModified && oldContent !== newContent) {
+      this.gitState.modifiedFiles.push(name);
+    }
+    modal.classList.remove("active");
+    updateVisualPanel(this.gitState);
+    addTerminalOutput(`Saved '${name}'`, "success");
   }
 
   renameFile(oldName, newName) {
@@ -366,12 +410,59 @@ export class GitTutorial {
         const action = btn.getAttribute("data-action");
         const file = btn.getAttribute("data-file");
         if (!action || !file) return;
-        if (!this.gitState.workingDirectory.includes(file)) return;
+        const inWd = this.gitState.workingDirectory.includes(file);
+        const inModified = Array.isArray(this.gitState.modifiedFiles) && this.gitState.modifiedFiles.includes(file);
+        if (!inWd && !inModified) return;
+        if (action === "edit") {
+          this.openFileEditor(file);
+        }
         if (action === "rename") {
           openRenameFileModal(file);
         }
         if (action === "delete") {
           openDeleteFileModal(file);
+        }
+      });
+    }
+
+    const fileEditorModal = document.getElementById("fileEditorModal");
+    const closeFileEditor = document.getElementById("closeFileEditor");
+    const cancelFileEditor = document.getElementById("cancelFileEditor");
+    const saveFileEditor = document.getElementById("saveFileEditor");
+    const fileEditorTextarea = document.getElementById("fileEditorTextarea");
+
+    const closeEditorModal = () => {
+      if (fileEditorModal) fileEditorModal.classList.remove("active");
+    };
+
+    if (closeFileEditor) {
+      closeFileEditor.addEventListener("click", closeEditorModal);
+    }
+
+    if (cancelFileEditor) {
+      cancelFileEditor.addEventListener("click", closeEditorModal);
+    }
+
+    if (saveFileEditor) {
+      saveFileEditor.addEventListener("click", () => {
+        this._saveEditorModal();
+      });
+    }
+
+    if (fileEditorModal) {
+      fileEditorModal.addEventListener("click", (e) => {
+        if (e.target === fileEditorModal) closeEditorModal();
+      });
+    }
+
+    if (fileEditorTextarea) {
+      fileEditorTextarea.addEventListener("keydown", (e) => {
+        if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          this._saveEditorModal();
+        }
+        if (e.key === "Escape") {
+          closeEditorModal();
         }
       });
     }
@@ -572,6 +663,13 @@ export class GitTutorial {
 
       case "touch": {
         const result = this.touchFile(args[0]);
+        output = result.output;
+        success = result.success;
+        break;
+      }
+
+      case "edit": {
+        const result = this.openFileEditor(args[0]);
         output = result.output;
         success = result.success;
         break;
