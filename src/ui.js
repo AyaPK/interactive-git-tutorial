@@ -33,7 +33,7 @@ export function clearTerminal() {
 
 export function renderLesson(mainLesson, subLesson, objectiveStates) {
   const titleParts = [mainLesson.title, subLesson.title].filter(Boolean);
-  document.getElementById("lessonTitle").textContent = titleParts.join(" — ");
+  document.getElementById("lessonTitle").textContent = titleParts.join(": ");
   document.getElementById("lessonDescription").innerHTML = subLesson.description;
 
   const objectivesList = document.getElementById("objectives").querySelector("ul");

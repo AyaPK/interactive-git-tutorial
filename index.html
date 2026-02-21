@@ -24,39 +24,39 @@
                 <div class="lesson-nav">
                     <h3>Lessons</h3>
                     <ul id="lessonList">
-                        <li class="lesson-item active" data-lesson="1">
+                        <li class="lesson-item active" data-lesson="1" id="lesson1">
                             <span class="lesson-number">1</span>
                             <span class="lesson-title">Introduction to Git</span>
                         </li>
-                        <li class="lesson-item" data-lesson="2">
+                        <li class="lesson-item tutorial-hidden" data-lesson="2" id="lesson2">
                             <span class="lesson-number">2</span>
                             <span class="lesson-title">git init & git status</span>
                         </li>
-                        <li class="lesson-item" data-lesson="3">
+                        <li class="lesson-item tutorial-hidden" data-lesson="3">
                             <span class="lesson-number">3</span>
                             <span class="lesson-title">git add</span>
                         </li>
-                        <li class="lesson-item" data-lesson="4">
+                        <li class="lesson-item tutorial-hidden" data-lesson="4">
                             <span class="lesson-number">4</span>
                             <span class="lesson-title">git commit</span>
                         </li>
-                        <li class="lesson-item" data-lesson="5">
+                        <li class="lesson-item tutorial-hidden" data-lesson="5">
                             <span class="lesson-number">5</span>
                             <span class="lesson-title">git push & git pull</span>
                         </li>
-                        <li class="lesson-item" data-lesson="6">
+                        <li class="lesson-item tutorial-hidden" data-lesson="6">
                             <span class="lesson-number">6</span>
                             <span class="lesson-title">Branching Basics</span>
                         </li>
-                        <li class="lesson-item" data-lesson="7">
+                        <li class="lesson-item tutorial-hidden" data-lesson="7">
                             <span class="lesson-number">7</span>
                             <span class="lesson-title">Merging</span>
                         </li>
-                        <li class="lesson-item" data-lesson="8">
+                        <li class="lesson-item tutorial-hidden" data-lesson="8">
                             <span class="lesson-number">8</span>
                             <span class="lesson-title">Git Rebase</span>
                         </li>
-                        <li class="lesson-item" data-lesson="9">
+                        <li class="lesson-item tutorial-hidden" data-lesson="9">
                             <span class="lesson-number">9</span>
                             <span class="lesson-title">Local vs Remote</span>
                         </li>
@@ -74,7 +74,7 @@
             </div>
 
             <section class="tutorial-area">
-                <div class="lesson-content">
+                <div class="lesson-content tutorial-hidden" id="lessonContent">
                     <div class="lesson-header">
                         <h2 id="lessonTitle">Introduction to Git</h2>
                         <div class="lesson-actions">
@@ -102,7 +102,7 @@
                     </div>
                 </div>
 
-                <div class="terminal-container">
+                <div class="terminal-container tutorial-hidden" id="terminalContainer">
                     <div class="terminal-header">
                         <div class="terminal-buttons">
                             <span class="button close"></span>
@@ -121,7 +121,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="notification-area" id="notificationArea"></div>
+                <div class="notification-area tutorial-hidden" id="notificationArea"></div>
             </section>
 
             <aside class="right-sidebar tutorial-hidden" id="rightSidebar">
