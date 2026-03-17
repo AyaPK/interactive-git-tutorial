@@ -1,3 +1,99 @@
+:root {
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --surface: rgba(255, 255, 255, 0.95);
+    --surface-solid: #ffffff;
+    --surface-subtle: #f7fafc;
+    --surface-hover: #edf2f7;
+    --surface-hover2: #e2e8f0;
+    --border: #e2e8f0;
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+    --text-faint: #a0aec0;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --shadow-strong: rgba(0, 0, 0, 0.2);
+    --theory-surface: rgba(255, 255, 255, 0.97);
+    --theory-border: #e2e8f0;
+    --footer-bg: #fafafa;
+    --textarea-bg: #f7fafc;
+    --textarea-focus: #ffffff;
+    --code-bg: #edf2f7;
+    --code-color: #553c9a;
+    --notice-bg: #fffaf0;
+    --notice-border: #fbd38d;
+    --notice-text: #744210;
+    --notif-hint-bg: #fffbeb;
+    --notif-hint-border: #f6e05e;
+    --notif-hint-text: #744210;
+    --notif-success-bg: #f0fff4;
+    --notif-success-border: #68d391;
+    --notif-success-text: #22543d;
+    --notif-complete-bg: #ebf4ff;
+    --notif-complete-border: #90cdf4;
+    --notif-complete-text: #2a4365;
+    --fs-untracked-bg: #e2e8f0;
+    --fs-untracked-text: #4a5568;
+    --fs-modified-bg: #feebc8;
+    --fs-modified-text: #7b341e;
+    --fs-staged-bg: #c6f6d5;
+    --fs-staged-text: #22543d;
+    --fs-committed-bg: #ebf4ff;
+    --fs-committed-text: #2a4365;
+    --timeline-branch-badge-bg: #edf2f7;
+    --timeline-head-color: #2d3748;
+    --progress-bg: #e2e8f0;
+    --secondary-btn-bg: #edf2f7;
+    --secondary-btn-text: #2d3748;
+}
+
+[data-theme="dark"] {
+    --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --surface: rgba(30, 32, 44, 0.98);
+    --surface-solid: #1e2030;
+    --surface-subtle: #252838;
+    --surface-hover: #2d3050;
+    --surface-hover2: #353860;
+    --border: #3a3d5c;
+    --text-primary: #e2e8f0;
+    --text-secondary: #b8c0cc;
+    --text-muted: #8892a4;
+    --text-faint: #5a6478;
+    --shadow: rgba(0, 0, 0, 0.35);
+    --shadow-strong: rgba(0, 0, 0, 0.5);
+    --theory-surface: rgba(28, 30, 45, 0.99);
+    --theory-border: #3a3d5c;
+    --footer-bg: #1a1c2e;
+    --textarea-bg: #1a1c2e;
+    --textarea-focus: #1e2030;
+    --code-bg: #2d3050;
+    --code-color: #b794f4;
+    --notice-bg: #2d2a1a;
+    --notice-border: #7a6020;
+    --notice-text: #f6e05e;
+    --notif-hint-bg: #2d2a1a;
+    --notif-hint-border: #7a6020;
+    --notif-hint-text: #f6e05e;
+    --notif-success-bg: #1a2d22;
+    --notif-success-border: #276749;
+    --notif-success-text: #68d391;
+    --notif-complete-bg: #1a2040;
+    --notif-complete-border: #2a4a7a;
+    --notif-complete-text: #90cdf4;
+    --fs-untracked-bg: #2d3050;
+    --fs-untracked-text: #b8c0cc;
+    --fs-modified-bg: #3d2a10;
+    --fs-modified-text: #f6ad55;
+    --fs-staged-bg: #1a3025;
+    --fs-staged-text: #68d391;
+    --fs-committed-bg: #1a2040;
+    --fs-committed-text: #90cdf4;
+    --timeline-branch-badge-bg: #2d3050;
+    --timeline-head-color: #e2e8f0;
+    --progress-bg: #2d3050;
+    --secondary-btn-bg: #2d3050;
+    --secondary-btn-text: #e2e8f0;
+}
+
 html {
     font-size: 95%;
 }
@@ -10,9 +106,9 @@ html {
 
 body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-gradient);
     min-height: 100vh;
-    color: #333;
+    color: var(--text-secondary);
 }
 
 .app-container {
@@ -22,7 +118,7 @@ body {
 }
 
 .header {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--surface);
     backdrop-filter: blur(10px);
     padding: 1rem 2rem;
     box-shadow: 0 2px 17px rgba(0, 0, 0, 0.1);
@@ -37,15 +133,17 @@ body {
 }
 
 .header h1 {
+    display: flex;
+    align-items: center;
     font-size: 1.5rem;
     font-weight: 600;
-    color: #4a5568;
+    color: var(--text-secondary);
 }
 
 .progress-bar {
     flex: 1;
     height: 7px;
-    background: #e2e8f0;
+    background: var(--progress-bg);
     border-radius: 3px;
     overflow: hidden;
     max-width: 255px;
@@ -60,7 +158,7 @@ body {
 
 .progress-text {
     font-size: 0.875rem;
-    color: #718096;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
@@ -75,7 +173,7 @@ body {
 }
 
 .timeline-panel {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--surface);
     backdrop-filter: blur(10px);
     margin: 0 1rem 1rem;
     border-radius: 10px;
@@ -96,12 +194,12 @@ body {
 }
 
 .timeline-header h3 {
-    color: #2d3748;
+    color: var(--text-primary);
     font-size: 1.05rem;
 }
 
 .timeline-subtitle {
-    color: #718096;
+    color: var(--text-muted);
     font-size: 0.85rem;
     font-weight: 500;
 }
@@ -111,7 +209,7 @@ body {
 }
 
 .timeline-empty {
-    color: #a0aec0;
+    color: var(--text-faint);
     font-style: italic;
     font-size: 0.9rem;
     padding: 0.75rem 0;
@@ -178,7 +276,7 @@ body {
 }
 
 .timeline-label.head {
-    fill: #2d3748;
+    fill: var(--timeline-head-color);
 }
 
 .timeline-label.remote {
@@ -196,15 +294,15 @@ body {
 .timeline-branch {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
-    color: #2d3748;
+    color: var(--text-primary);
     display: inline-flex;
     gap: 0.5rem;
     align-items: center;
 }
 
 .timeline-branch-badge {
-    background: #edf2f7;
-    color: #2d3748;
+    background: var(--timeline-branch-badge-bg);
+    color: var(--text-primary);
     border-radius: 999px;
     padding: 0.15rem 0.5rem;
     font-size: 0.75rem;
@@ -270,7 +368,7 @@ body {
     position: absolute;
     top: -7px;
     font-size: 0.7rem;
-    color: #4a5568;
+    color: var(--text-secondary);
     font-weight: 700;
     z-index: 3;
 }
@@ -296,7 +394,7 @@ body {
 
 .sidebar {
     width: 213px;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--surface);
     backdrop-filter: blur(10px);
     border-radius: 10px;
     padding: 1.5rem;
@@ -313,7 +411,7 @@ body {
 .lesson-nav h3 {
     font-size: 1.125rem;
     margin-bottom: 1rem;
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .lesson-list {
@@ -332,7 +430,7 @@ body {
 }
 
 .lesson-item:hover {
-    background: #f7fafc;
+    background: var(--surface-hover);
 }
 
 .lesson-item.active {
@@ -347,7 +445,7 @@ body {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #e2e8f0;
+    background: var(--surface-hover2);
     font-size: 0.75rem;
     font-weight: 600;
 }
@@ -369,7 +467,7 @@ body {
 }
 
 .lesson-content {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--surface);
     backdrop-filter: blur(10px);
     border-radius: 10px;
     padding: 1.5rem;
@@ -390,9 +488,9 @@ body {
 }
 
 .secondary-action-btn {
-    background: #edf2f7;
-    color: #2d3748;
-    border: 1px solid #e2e8f0;
+    background: var(--secondary-btn-bg);
+    color: var(--secondary-btn-text);
+    border: 1px solid var(--border);
     padding: 0.5rem 0.9rem;
     border-radius: 6px;
     cursor: pointer;
@@ -401,12 +499,12 @@ body {
 }
 
 .secondary-action-btn:hover {
-    background: #e2e8f0;
+    background: var(--surface-hover2);
 }
 
 .lesson-header h2 {
     font-size: 1.5rem;
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .help-btn {
@@ -431,11 +529,11 @@ body {
 .lesson-description p {
     margin-bottom: 0.75rem;
     line-height: 1.6;
-    color: #4a5568;
+    color: var(--text-secondary);
 }
 
 .objectives {
-    background: #f7fafc;
+    background: var(--surface-subtle);
     padding: 1rem;
     border-radius: 8px;
     border-left: 4px solid #667eea;
@@ -443,7 +541,7 @@ body {
 
 .objectives h4 {
     margin-bottom: 0.5rem;
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .objectives ul {
@@ -453,7 +551,7 @@ body {
 
 .objectives li {
     padding: 0.25rem 0;
-    color: #4a5568;
+    color: var(--text-secondary);
     position: relative;
     padding-left: 1.5rem;
 }
@@ -569,7 +667,7 @@ body {
 }
 
 .visual-panel {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--surface);
     backdrop-filter: blur(10px);
     border-radius: 10px;
     padding: 1.5rem;
@@ -577,17 +675,17 @@ body {
 }
 
 .panel-header h3 {
-    color: #2d3748;
+    color: var(--text-primary);
     margin-bottom: 1rem;
 }
 
 .repo-notice {
     display: none;
-    background: #fffaf0;
-    border: 1px solid #fbd38d;
+    background: var(--notice-bg);
+    border: 1px solid var(--notice-border);
     border-radius: 8px;
     padding: 0.75rem;
-    color: #744210;
+    color: var(--notice-text);
     font-size: 0.875rem;
     margin-bottom: 1rem;
 }
@@ -597,7 +695,7 @@ body {
 }
 
 .repo-notice code {
-    background: rgba(45, 55, 72, 0.08);
+    background: var(--code-bg);
     padding: 0.1rem 0.35rem;
     border-radius: 4px;
 }
@@ -611,7 +709,7 @@ body {
 .working-directory,
 .staging-area,
 .repository {
-    background: #f7fafc;
+    background: var(--surface-subtle);
     padding: 1rem;
     border-radius: 8px;
     border-top: 3px solid #667eea;
@@ -628,7 +726,7 @@ body {
 .git-state h4 {
     font-size: 0.875rem;
     margin-bottom: 0.75rem;
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .repo-section-header {
@@ -646,9 +744,9 @@ body {
     width: 24px;
     height: 24px;
     border-radius: 7px;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
-    color: #2d3748;
+    border: 1px solid var(--border);
+    background: var(--surface-solid);
+    color: var(--text-primary);
     cursor: pointer;
     font-weight: 600;
     line-height: 1;
@@ -659,7 +757,7 @@ body {
 }
 
 .repo-action-btn:hover {
-    background: #f7fafc;
+    background: var(--surface-hover);
 }
 
 .file-list,
@@ -668,12 +766,12 @@ body {
 }
 
 .file-item {
-    background: white;
+    background: var(--surface-solid);
     padding: 0.5rem;
     border-radius: 4px;
     margin-bottom: 0.25rem;
     font-size: 0.875rem;
-    color: #4a5568;
+    color: var(--text-secondary);
     border-left: 3px solid #667eea;
 }
 
@@ -697,9 +795,9 @@ body {
 }
 
 .file-action-btn {
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
-    color: #2d3748;
+    border: 1px solid var(--border);
+    background: var(--surface-solid);
+    color: var(--text-primary);
     border-radius: 5px;
     width: 22px;
     height: 22px;
@@ -712,7 +810,7 @@ body {
 }
 
 .file-action-btn:hover {
-    background: #f7fafc;
+    background: var(--surface-hover);
 }
 
 .file-action-btn.file-action-danger:hover {
@@ -722,18 +820,18 @@ body {
 }
 
 .commit-item {
-    background: white;
+    background: var(--surface-solid);
     padding: 0.5rem;
     border-radius: 4px;
     margin-bottom: 0.25rem;
     font-size: 0.875rem;
-    color: #4a5568;
+    color: var(--text-secondary);
     border-left: 3px solid #48bb78;
 }
 
 .commit-hash {
     font-family: 'JetBrains Mono', monospace;
-    color: #718096;
+    color: var(--text-muted);
     font-size: 0.75rem;
 }
 
@@ -743,12 +841,12 @@ body {
 }
 
 .commit-author {
-    color: #a0aec0;
+    color: var(--text-faint);
     font-size: 0.75rem;
 }
 
 .empty-state {
-    color: #a0aec0;
+    color: var(--text-faint);
     font-style: italic;
     font-size: 0.875rem;
 }
@@ -771,7 +869,7 @@ body {
 }
 
 .modal-content {
-    background: white;
+    background: var(--surface-solid);
     border-radius: 10px;
     max-width: 510px;
     width: 90%;
@@ -785,11 +883,11 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
 }
 
 .modal-header h3 {
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .close-btn {
@@ -797,13 +895,13 @@ body {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #a0aec0;
+    color: var(--text-faint);
     padding: 0.25rem;
     line-height: 1;
 }
 
 .close-btn:hover {
-    color: #4a5568;
+    color: var(--text-secondary);
 }
 
 .modal-body {
@@ -812,12 +910,12 @@ body {
 
 .reading-content h4 {
     margin-bottom: 0.5rem;
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .reading-content p {
     margin-bottom: 0.75rem;
-    color: #4a5568;
+    color: var(--text-secondary);
     line-height: 1.55;
 }
 
@@ -842,13 +940,13 @@ body {
 .form-label {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .form-input {
     width: 100%;
     padding: 0.75rem 0.875rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     border-radius: 8px;
     font-size: 0.95rem;
     outline: none;
@@ -857,6 +955,8 @@ body {
 .form-input:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.18);
+    background: var(--surface-solid);
+    color: var(--text-primary);
 }
 
 .modal-actions {
@@ -893,17 +993,17 @@ body {
 }
 
 .secondary-btn {
-    background: #edf2f7;
-    color: #2d3748;
+    background: var(--secondary-btn-bg);
+    color: var(--secondary-btn-text);
 }
 
 .secondary-btn:hover {
-    background: #e2e8f0;
+    background: var(--surface-hover2);
 }
 
 .command-help h4 {
     margin-bottom: 1rem;
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .command-list {
@@ -917,7 +1017,7 @@ body {
     align-items: center;
     gap: 1rem;
     padding: 0.75rem;
-    background: #f7fafc;
+    background: var(--surface-subtle);
     border-radius: 6px;
 }
 
@@ -932,7 +1032,7 @@ body {
 }
 
 .command-item span {
-    color: #4a5568;
+    color: var(--text-secondary);
     font-size: 0.875rem;
 }
 
@@ -1022,21 +1122,21 @@ body {
 }
 
 .notification.notif-hint {
-    background: #fffbeb;
-    border: 1px solid #f6e05e;
-    color: #744210;
+    background: var(--notif-hint-bg);
+    border: 1px solid var(--notif-hint-border);
+    color: var(--notif-hint-text);
 }
 
 .notification.notif-success {
-    background: #f0fff4;
-    border: 1px solid #68d391;
-    color: #22543d;
+    background: var(--notif-success-bg);
+    border: 1px solid var(--notif-success-border);
+    color: var(--notif-success-text);
 }
 
 .notification.notif-complete {
-    background: #ebf4ff;
-    border: 1px solid #90cdf4;
-    color: #2a4365;
+    background: var(--notif-complete-bg);
+    border: 1px solid var(--notif-complete-border);
+    color: var(--notif-complete-text);
     font-weight: 600;
 }
 
@@ -1070,7 +1170,7 @@ body {
 }
 
 .fs-file-row:hover {
-    background: #edf2f7;
+    background: var(--surface-hover);
 }
 
 .fs-file-icon {
@@ -1082,7 +1182,7 @@ body {
 .fs-file-name {
     flex: 1;
     font-family: 'JetBrains Mono', monospace;
-    color: #2d3748;
+    color: var(--text-primary);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1099,23 +1199,23 @@ body {
 }
 
 .fs-status-untracked {
-    background: #e2e8f0;
-    color: #4a5568;
+    background: var(--fs-untracked-bg);
+    color: var(--fs-untracked-text);
 }
 
 .fs-status-modified {
-    background: #feebc8;
-    color: #7b341e;
+    background: var(--fs-modified-bg);
+    color: var(--fs-modified-text);
 }
 
 .fs-status-staged {
-    background: #c6f6d5;
-    color: #22543d;
+    background: var(--fs-staged-bg);
+    color: var(--fs-staged-text);
 }
 
 .fs-status-committed {
-    background: #ebf4ff;
-    color: #2a4365;
+    background: var(--fs-committed-bg);
+    color: var(--fs-committed-text);
 }
 
 /* ── Modified file indicator ───────────────────────────────────────────────── */
@@ -1171,7 +1271,7 @@ body {
 
 .file-editor-hint {
     font-size: 0.78rem;
-    color: #a0aec0;
+    color: var(--text-faint);
     font-weight: 400;
     white-space: nowrap;
 }
@@ -1193,11 +1293,11 @@ body {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.9rem;
     line-height: 1.65;
-    color: #2d3748;
-    background: #f7fafc;
+    color: var(--text-primary);
+    background: var(--textarea-bg);
     border: none;
-    border-top: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     padding: 1rem 1.25rem;
     outline: none;
     tab-size: 2;
@@ -1207,7 +1307,7 @@ body {
 }
 
 .file-editor-textarea:focus {
-    background: #fff;
+    background: var(--textarea-focus);
     box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.18);
 }
 
@@ -1217,14 +1317,14 @@ body {
     justify-content: space-between;
     gap: 1rem;
     padding: 0.85rem 1.5rem;
-    border-top: 1px solid #e2e8f0;
-    background: #fafafa;
+    border-top: 1px solid var(--border);
+    background: var(--footer-bg);
     border-radius: 0 0 10px 10px;
 }
 
 .file-editor-footer-note {
     font-size: 0.78rem;
-    color: #a0aec0;
+    color: var(--text-faint);
     font-style: italic;
 }
 
@@ -1245,7 +1345,7 @@ body {
 }
 
 .theory-body {
-    background: rgba(255, 255, 255, 0.97);
+    background: var(--theory-surface);
     border-radius: 16px;
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
     padding: 2.5rem 3rem;
@@ -1256,13 +1356,13 @@ body {
 .theory-content {
     font-size: 1rem;
     line-height: 1.75;
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .theory-content h3 {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #4a5568;
+    color: var(--text-secondary);
     margin: 1.4rem 0 0.5rem;
 }
 
@@ -1283,12 +1383,12 @@ body {
 }
 
 .theory-content code {
-    background: #edf2f7;
+    background: var(--code-bg);
     border-radius: 4px;
     padding: 0.1em 0.4em;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.88em;
-    color: #553c9a;
+    color: var(--code-color);
 }
 
 .theory-content a {
@@ -1301,10 +1401,32 @@ body {
     justify-content: flex-end;
     margin-top: 2rem;
     padding-top: 1.25rem;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--theory-border);
 }
 
 .theory-try-btn {
     font-size: 1rem;
     padding: 0.65rem 1.75rem;
+}
+
+/* ── Dark mode toggle ──────────────────────────────────────────────────────── */
+
+.dark-mode-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s;
+    margin-left: auto;
+}
+
+.dark-mode-toggle:hover {
+    background: var(--surface-hover);
 }

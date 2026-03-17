@@ -172,6 +172,28 @@ export class GitTutorial {
   }
 
   setupEventListeners() {
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    if (darkModeToggle) {
+      const root = document.documentElement;
+      const saved = localStorage.getItem("theme");
+      if (saved === "dark") {
+        root.setAttribute("data-theme", "dark");
+        darkModeToggle.textContent = "☀️";
+      }
+      darkModeToggle.addEventListener("click", () => {
+        const isDark = root.getAttribute("data-theme") === "dark";
+        if (isDark) {
+          root.removeAttribute("data-theme");
+          darkModeToggle.textContent = "🌙";
+          localStorage.setItem("theme", "light");
+        } else {
+          root.setAttribute("data-theme", "dark");
+          darkModeToggle.textContent = "☀️";
+          localStorage.setItem("theme", "dark");
+        }
+      });
+    }
+
     const terminalInput = document.getElementById("terminalInput");
     const helpBtn = document.getElementById("helpBtn");
     const closeHelp = document.getElementById("closeHelp");
