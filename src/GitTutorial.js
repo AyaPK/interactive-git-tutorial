@@ -571,7 +571,7 @@ export class GitTutorial {
 
     const totalSteps = this.getTotalSubLessonCount();
     const stepIndex = this.getCurrentSubLessonStepIndex();
-    const stepText = `Lesson ${this.currentLesson} of ${this.totalLessons} — Step ${stepIndex + 1} of ${totalSteps}`;
+    const stepText = `Lesson ${this.currentLesson} of ${this.totalLessons} - Step ${stepIndex + 1} of ${totalSteps}`;
     const percent = totalSteps === 0 ? 0 : ((stepIndex + 1) / totalSteps) * 100;
     updateProgress(stepText, percent);
   }
