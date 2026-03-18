@@ -274,14 +274,6 @@ export class GitTutorial {
     if (closeFurtherReadingBottom) {
       closeFurtherReadingBottom.addEventListener("click", () => {
         if (furtherReadingModal) furtherReadingModal.classList.remove("active");
-        if (this.nextLessonPending) {
-          this.nextLessonPending = false;
-          // reset button label
-          closeFurtherReadingBottom.textContent = "Got it";
-          if (this.currentLesson < this.totalLessons) {
-            this.loadLesson(this.currentLesson + 1, 0);
-          }
-        }
       });
     }
 
