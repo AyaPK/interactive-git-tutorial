@@ -619,6 +619,29 @@ body {
 .terminal-title {
     color: #888;
     font-size: 0.875rem;
+    flex: 1;
+}
+
+.terminal-undo-btn {
+    background: transparent;
+    border: 1px solid #555;
+    color: #aaa;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, color 0.15s;
+}
+
+.terminal-undo-btn:hover:not(:disabled) {
+    background: #444;
+    color: #fff;
+}
+
+.terminal-undo-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
 }
 
 .terminal-body {

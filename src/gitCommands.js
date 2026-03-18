@@ -26,7 +26,8 @@ Git Commands:
   git rebase <branch> - Rebase current branch onto another
   git log           - Show commit history
   git rm <file>     - Remove a tracked file
-  git remote add origin <url> - Add remote repository`;
+  git remote add origin <url> - Add remote repository
+  git reset HEAD <file> - Unstage a file`;
 }
 
 function isTrackedFile(gitState, file) {
@@ -270,6 +271,109 @@ function handleGitRebase(gitState, args) {
   return `Rebasing ${gitState.currentBranch} onto ${branchName}\n\nSuccessfully rebased and updated refs/heads/${gitState.currentBranch}`;
 }
 
+function handleGitReset(gitState, args) {
+  if (!gitState.initialized) {
+    return { output: "fatal: not a git repository (or any of the parent directories): .git", success: false };
+  }
+
+  const mode = args.find((a) => a === "--soft" || a === "--mixed" || a === "--hard") ?? "--mixed";
+  const filteredArgs = args.filter((a) => a !== "--soft" && a !== "--mixed" && a !== "--hard");
+  const target = filteredArgs[0] ?? "HEAD";
+
+  if (target === "HEAD" && filteredArgs.length === 0) {
+    gitState.stagedFiles = [];
+    return { output: "Unstaged all changes.", success: true };
+  }
+
+  if (target.startsWith("HEAD") && filteredArgs.length > 0 && !target.includes("~") && filteredArgs[1] !== undefined) {
+    const file = filteredArgs[1] ?? filteredArgs[0];
+    const idx = gitState.stagedFiles.indexOf(file);
+    if (idx === -1) {
+      return { output: `fatal: pathspec '${file}' did not match any files`, success: false };
+    }
+    gitState.stagedFiles.splice(idx, 1);
+    const isTracked = isTrackedFile(gitState, file);
+    if (isTracked && !gitState.workingDirectory.includes(file)) {
+      if (!Array.isArray(gitState.modifiedFiles)) gitState.modifiedFiles = [];
+      if (!gitState.modifiedFiles.includes(file)) gitState.modifiedFiles.push(file);
+    } else {
+      if (!gitState.workingDirectory.includes(file)) gitState.workingDirectory.push(file);
+    }
+    return { output: `Unstaged changes for '${file}'.`, success: true };
+  }
+
+  const stepsBack = (target.match(/~(\d+)$/) || target.match(/(~+)$/))?.[0]
+    ? (target.includes("~") ? (parseInt(target.split("~")[1] || "1", 10)) : 0)
+    : 0;
+
+  if (stepsBack === 0 && target !== "HEAD") {
+    const file = target;
+    const idx = gitState.stagedFiles.indexOf(file);
+    if (idx !== -1) {
+      gitState.stagedFiles.splice(idx, 1);
+      const isTracked = isTrackedFile(gitState, file);
+      if (isTracked) {
+        if (!Array.isArray(gitState.modifiedFiles)) gitState.modifiedFiles = [];
+        if (!gitState.modifiedFiles.includes(file)) gitState.modifiedFiles.push(file);
+      } else {
+        if (!gitState.workingDirectory.includes(file)) gitState.workingDirectory.push(file);
+      }
+      return { output: `Unstaged changes for '${file}'.`, success: true };
+    }
+    return { output: `fatal: pathspec '${file}' did not match any files`, success: false };
+  }
+
+  const branch = gitState.currentBranch;
+  const currentHead = gitState.branchHeads?.[branch] ?? null;
+
+  if (!currentHead) {
+    return { output: "fatal: Failed to resolve 'HEAD' as a valid ref.", success: false };
+  }
+
+  const commitsByHash = new Map((gitState.commits || []).map((c) => [c.hash, c]));
+
+  let hash = currentHead;
+  for (let i = 0; i < stepsBack; i++) {
+    const commit = commitsByHash.get(hash);
+    if (!commit) {
+      return { output: `fatal: Cannot reset: not enough commits (only ${i} available).`, success: false };
+    }
+    hash = commit.parents?.[0] ?? null;
+  }
+
+  const removedCommits = [];
+  let cursor = currentHead;
+  for (let i = 0; i < stepsBack; i++) {
+    const c = commitsByHash.get(cursor);
+    if (c) removedCommits.push(c);
+    cursor = c?.parents?.[0] ?? null;
+  }
+
+  const allRemovedFiles = [...new Set(removedCommits.flatMap((c) => c.files ?? []))];
+
+  if (mode === "--soft") {
+    gitState.stagedFiles.push(...allRemovedFiles.filter((f) => !gitState.stagedFiles.includes(f)));
+  } else if (mode === "--mixed") {
+    if (!Array.isArray(gitState.modifiedFiles)) gitState.modifiedFiles = [];
+    for (const f of allRemovedFiles) {
+      if (!gitState.workingDirectory.includes(f) && !gitState.modifiedFiles.includes(f)) {
+        gitState.modifiedFiles.push(f);
+      }
+    }
+  } else if (mode === "--hard") {
+  }
+
+  gitState.commits = gitState.commits.filter((c) => !removedCommits.some((r) => r.hash === c.hash));
+  if (!gitState.branchHeads) gitState.branchHeads = {};
+  gitState.branchHeads[branch] = hash;
+
+  const modeLabel = mode === "--soft" ? "soft" : mode === "--hard" ? "hard" : "mixed";
+  return {
+    output: `HEAD is now at ${hash ? hash.slice(0, 7) : "(root)"} (${modeLabel} reset, ${stepsBack} commit${stepsBack !== 1 ? "s" : ""} undone)`,
+    success: true
+  };
+}
+
 export function handleGitCommand(gitState, subcommand, args) {
   let output = "";
   let success = false;
@@ -381,6 +485,13 @@ export function handleGitCommand(gitState, subcommand, args) {
       output = handleGitRebase(gitState, args);
       success = true;
       break;
+
+    case "reset": {
+      const resetResult = handleGitReset(gitState, args);
+      output = resetResult.output;
+      success = resetResult.success;
+      break;
+    }
 
     case "log": {
       if (!gitState.initialized) {

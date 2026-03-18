@@ -54,7 +54,7 @@ export function updateProgress(progressTextValue, progressPercent) {
   progressText.textContent = progressTextValue;
 }
 
-export function updateLessonNav(currentLesson) {
+export function updateLessonNav(currentLesson, completedLessons = new Set()) {
   const lessonItems = document.querySelectorAll(".lesson-item");
   lessonItems.forEach((item, index) => {
     const lessonNum = index + 1;
@@ -62,6 +62,11 @@ export function updateLessonNav(currentLesson) {
       item.classList.add("active");
     } else {
       item.classList.remove("active");
+    }
+    if (completedLessons.has(lessonNum)) {
+      item.classList.add("completed");
+    } else {
+      item.classList.remove("completed");
     }
   });
 }

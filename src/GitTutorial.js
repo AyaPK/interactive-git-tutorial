@@ -33,6 +33,8 @@ export class GitTutorial {
 
     this.objectiveCompletion = {};
     this.nextLessonPending = false;
+    this.completedLessons = this._loadCompletedLessons();
+    this.undoStack = [];
 
     this.init();
   }
@@ -224,6 +226,12 @@ export class GitTutorial {
     const postLessonPanel = document.getElementById("postLessonPanel");
     const nextLessonBtn = document.getElementById("nextLessonBtn");
     const tryItOutBtn = document.getElementById("tryItOutBtn");
+    const viewTheoryBtn = document.getElementById("viewTheoryBtn");
+    const undoBtn = document.getElementById("undoBtn");
+
+    if (undoBtn) {
+      undoBtn.addEventListener("click", () => this.undo());
+    }
 
     terminalInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
@@ -298,6 +306,13 @@ export class GitTutorial {
     if (tryItOutBtn) {
       tryItOutBtn.addEventListener("click", () => {
         this.startInteractiveLesson();
+      });
+    }
+
+    if (viewTheoryBtn) {
+      viewTheoryBtn.addEventListener("click", () => {
+        const lesson = this.getLesson(this.currentLesson);
+        if (lesson?.theoryHtml) this.showTheoryScreen(lesson);
       });
     }
 
@@ -388,7 +403,9 @@ export class GitTutorial {
     lessonItems.forEach((item) => {
       item.addEventListener("click", () => {
         const lessonNum = Number.parseInt(item.dataset.lesson, 10);
-        if (lessonNum <= this.currentLesson || this.currentLesson === this.totalLessons) {
+        const furthest = this.completedLessons.size > 0 ? Math.max(...this.completedLessons) : 0;
+        const unlocked = lessonNum <= furthest + 1;
+        if (unlocked) {
           this.loadLesson(lessonNum, 0);
         }
       });
@@ -581,7 +598,7 @@ export class GitTutorial {
     const objectiveStates = this.getObjectiveStates(this.currentLesson, this.currentSubLessonIndex);
 
     renderLesson(lesson, subLesson, objectiveStates);
-    updateLessonNav(this.currentLesson);
+    updateLessonNav(this.currentLesson, this.completedLessons);
 
     const totalSteps = this.getTotalSubLessonCount();
     const stepIndex = this.getCurrentSubLessonStepIndex();
@@ -614,6 +631,7 @@ export class GitTutorial {
     }
     if (tutorialArea) tutorialArea.classList.add("tutorial-hidden");
     if (theoryScreen) theoryScreen.classList.remove("tutorial-hidden");
+    updateLessonNav(this.currentLesson, this.completedLessons);
   }
 
   startInteractiveLesson() {
@@ -632,6 +650,15 @@ export class GitTutorial {
     const postBody = document.getElementById("postLessonBody");
     if (postBody) postBody.innerHTML = '<p>Review key concepts from this lesson. When you\'re ready, continue to the next lesson.</p>';
     this.nextLessonPending = false;
+
+    const vtBtn = document.getElementById("viewTheoryBtn");
+    if (vtBtn) {
+      if (lesson?.theoryHtml) {
+        vtBtn.classList.remove("tutorial-hidden");
+      } else {
+        vtBtn.classList.add("tutorial-hidden");
+      }
+    }
 
     const frBtn = document.getElementById("furtherReadingBtn");
     const frModal = document.getElementById("furtherReadingModal");
@@ -656,6 +683,27 @@ export class GitTutorial {
     }
   }
 
+  _snapshotState() {
+    const snapshot = JSON.parse(JSON.stringify(this.gitState));
+    this.undoStack.push(snapshot);
+    if (this.undoStack.length > 20) this.undoStack.shift();
+    this._updateUndoBtn();
+  }
+
+  _updateUndoBtn() {
+    const btn = document.getElementById("undoBtn");
+    if (!btn) return;
+    btn.disabled = this.undoStack.length === 0;
+  }
+
+  undo() {
+    if (this.undoStack.length === 0) return;
+    this.gitState = this.undoStack.pop();
+    addTerminalOutput("Undid last action.", "system");
+    updateVisualPanel(this.gitState);
+    this._updateUndoBtn();
+  }
+
   handleCommand(input) {
     const command = input.trim();
     if (!command) return;
@@ -669,6 +717,11 @@ export class GitTutorial {
 
     let output = "";
     let success = false;
+
+    const isReadOnly = mainCommand === "help" || mainCommand === "clear" || mainCommand === "cls" || mainCommand === "ls" ||
+      (mainCommand === "git" && (args[0] === "status" || args[0] === "log"));
+
+    if (!isReadOnly) this._snapshotState();
 
     switch (mainCommand) {
       case "help":
@@ -726,6 +779,8 @@ export class GitTutorial {
         output = `Command not found: ${mainCommand}. Type 'help' for available commands.`;
     }
 
+    if (!isReadOnly && !success) this.undoStack.pop();
+
     addTerminalOutput(output, success ? "success" : "error");
     updateVisualPanel(this.gitState);
     this.checkLessonProgress(command, output);
@@ -765,6 +820,7 @@ export class GitTutorial {
 
       if (this.currentLesson < this.totalLessons) {
         showNotification("Lesson complete!", "complete");
+        this._markLessonComplete(this.currentLesson);
         const pl = document.getElementById("postLessonPanel");
         if (pl) {
           pl.classList.remove("tutorial-hidden");
@@ -778,7 +834,24 @@ export class GitTutorial {
         return;
       }
 
+      this._markLessonComplete(this.currentLesson);
       showNotification("🎊 Congratulations! You've completed all lessons!", "complete");
     }, 600);
+  }
+
+  _loadCompletedLessons() {
+    try {
+      const raw = localStorage.getItem("git_tutorial_completed_lessons");
+      if (raw) return new Set(JSON.parse(raw));
+    } catch (_) {}
+    return new Set();
+  }
+
+  _markLessonComplete(lessonNum) {
+    this.completedLessons.add(lessonNum);
+    try {
+      localStorage.setItem("git_tutorial_completed_lessons", JSON.stringify([...this.completedLessons]));
+    } catch (_) {}
+    updateLessonNav(this.currentLesson, this.completedLessons);
   }
 }
