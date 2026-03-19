@@ -223,14 +223,44 @@ export class GitTutorial {
     const cancelDeleteFile = document.getElementById("cancelDeleteFile");
     const confirmDeleteFile = document.getElementById("confirmDeleteFile");
     const deleteFileName = document.getElementById("deleteFileName");
-    const postLessonPanel = document.getElementById("postLessonPanel");
-    const nextLessonBtn = document.getElementById("nextLessonBtn");
     const tryItOutBtn = document.getElementById("tryItOutBtn");
     const viewTheoryBtn = document.getElementById("viewTheoryBtn");
     const undoBtn = document.getElementById("undoBtn");
+    const postLessonModal = document.getElementById("postLessonModal");
+    const postLessonNextBtn = document.getElementById("postLessonNextBtn");
+    const closePostLessonModal = document.getElementById("closePostLessonModal");
 
     if (undoBtn) {
       undoBtn.addEventListener("click", () => this.undo());
+    }
+
+    const dismissPostLessonModal = () => {
+      if (postLessonModal) postLessonModal.classList.remove("active");
+    };
+
+    if (closePostLessonModal) {
+      closePostLessonModal.addEventListener("click", dismissPostLessonModal);
+    }
+
+    if (postLessonModal) {
+      postLessonModal.addEventListener("click", (e) => {
+        if (e.target === postLessonModal) dismissPostLessonModal();
+      });
+    }
+
+    if (postLessonNextBtn) {
+      postLessonNextBtn.addEventListener("click", () => {
+        dismissPostLessonModal();
+        if (this.nextLessonPending && this.currentLesson < this.totalLessons) {
+          this.nextLessonPending = false;
+          this.loadLesson(this.currentLesson + 1, 0);
+        }
+      });
+    }
+
+    const terminalContainer = document.getElementById("terminalContainer");
+    if (terminalContainer) {
+      terminalContainer.addEventListener("click", () => terminalInput.focus());
     }
 
     terminalInput.addEventListener("keydown", (e) => {
@@ -289,16 +319,6 @@ export class GitTutorial {
       furtherReadingModal.addEventListener("click", (e) => {
         if (e.target === furtherReadingModal) {
           closeFurtherReadingModal();
-        }
-      });
-    }
-
-    if (nextLessonBtn) {
-      nextLessonBtn.addEventListener("click", () => {
-        if (postLessonPanel) postLessonPanel.classList.add("tutorial-hidden");
-        if (this.nextLessonPending && this.currentLesson < this.totalLessons) {
-          this.nextLessonPending = false;
-          this.loadLesson(this.currentLesson + 1, 0);
         }
       });
     }
@@ -645,10 +665,6 @@ export class GitTutorial {
     this.getObjectiveStates(this.currentLesson, this.currentSubLessonIndex);
     this.refreshLessonUI();
 
-    const postPanel = document.getElementById("postLessonPanel");
-    if (postPanel) postPanel.classList.add("tutorial-hidden");
-    const postBody = document.getElementById("postLessonBody");
-    if (postBody) postBody.innerHTML = '<p>Review key concepts from this lesson. When you\'re ready, continue to the next lesson.</p>';
     this.nextLessonPending = false;
 
     const vtBtn = document.getElementById("viewTheoryBtn");
@@ -681,6 +697,9 @@ export class GitTutorial {
     if (subLesson.hint) {
       showNotification(subLesson.hint, "hint");
     }
+
+    const termInput = document.getElementById("terminalInput");
+    if (termInput) termInput.focus();
   }
 
   _snapshotState() {
@@ -821,16 +840,13 @@ export class GitTutorial {
       if (this.currentLesson < this.totalLessons) {
         showNotification("Lesson complete!", "complete");
         this._markLessonComplete(this.currentLesson);
-        const pl = document.getElementById("postLessonPanel");
-        if (pl) {
-          pl.classList.remove("tutorial-hidden");
-          pl.classList.add("tutorial-reveal");
-        }
-        const bodyEl = document.getElementById("postLessonBody");
-        if (bodyEl && lesson?.furtherReadingHtml) {
-          bodyEl.innerHTML = lesson.furtherReadingHtml;
-        }
         this.nextLessonPending = true;
+        const modalBody = document.getElementById("postLessonModalBody");
+        if (modalBody) {
+          modalBody.innerHTML = lesson?.furtherReadingHtml || '<p>Well done! You\'ve completed this lesson.</p>';
+        }
+        const modal = document.getElementById("postLessonModal");
+        if (modal) modal.classList.add("active");
         return;
       }
 

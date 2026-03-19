@@ -93,15 +93,6 @@
 
                         </ul>
                     </div>
-                    <div class="post-lesson-panel tutorial-hidden" id="postLessonPanel">
-                        <h3>Lesson Complete!</h3>
-                        <div class="post-lesson-body" id="postLessonBody">
-                            <p>Review key concepts from this lesson. When you're ready, continue to the next lesson.</p>
-                        </div>
-                        <div class="post-lesson-actions">
-                            <button class="primary-btn" id="nextLessonBtn" type="button">Next lesson</button>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="terminal-container tutorial-hidden" id="terminalContainer">
@@ -359,6 +350,23 @@
             </div>
         </div>
     </div>
+
+        <div class="help-modal" id="postLessonModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>🎉 Lesson Complete!</h3>
+                    <button class="close-btn" id="closePostLessonModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="reading-content" id="postLessonModalBody">
+                        <p>Well done! You've completed this lesson.</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="primary-btn" id="postLessonNextBtn" type="button">Next lesson →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <script type="module" src="/src/main.js"></script>
 </body>
