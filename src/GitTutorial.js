@@ -329,6 +329,27 @@ export class GitTutorial {
       });
     }
 
+    const prevPageBtn = document.getElementById("prevPageBtn");
+    const nextPageBtn = document.getElementById("nextPageBtn");
+
+    if (prevPageBtn) {
+      prevPageBtn.addEventListener("click", () => {
+        if (this._theoryPageIndex > 0) {
+          this._theoryPageIndex--;
+          this._renderTheoryPage(this.getLesson(this.currentLesson));
+        }
+      });
+    }
+
+    if (nextPageBtn) {
+      nextPageBtn.addEventListener("click", () => {
+        if (this._theoryPages && this._theoryPageIndex < this._theoryPages.length - 1) {
+          this._theoryPageIndex++;
+          this._renderTheoryPage(this.getLesson(this.currentLesson));
+        }
+      });
+    }
+
     if (viewTheoryBtn) {
       viewTheoryBtn.addEventListener("click", () => {
         const lesson = this.getLesson(this.currentLesson);
@@ -640,18 +661,75 @@ export class GitTutorial {
     }
   }
 
-  showTheoryScreen(lesson) {
+  showTheoryScreen(lesson, pageIndex = 0) {
     const theoryScreen = document.getElementById("theoryScreen");
     const tutorialArea = document.querySelector(".tutorial-area");
     const theoryContent = document.getElementById("theoryContent");
 
-    if (theoryContent) {
-      const lessonTitle = `<h2 style="margin-bottom:1.25rem;font-size:1.4rem;color:#2d3748;">${lesson.title}</h2>`;
-      theoryContent.innerHTML = lessonTitle + lesson.theoryHtml;
-    }
+    const pages = lesson.theoryHtml
+      .split('<hr class="theory-page-break">')
+      .map((p) => p.trim())
+      .filter(Boolean);
+    this._theoryPages = pages.length > 0 ? pages : [lesson.theoryHtml];
+    this._theoryPageIndex = Math.max(0, Math.min(pageIndex, this._theoryPages.length - 1));
+
+    this._renderTheoryPage(lesson);
+
     if (tutorialArea) tutorialArea.classList.add("tutorial-hidden");
     if (theoryScreen) theoryScreen.classList.remove("tutorial-hidden");
     updateLessonNav(this.currentLesson, this.completedLessons);
+  }
+
+  _renderTheoryPage(lesson) {
+    const theoryContent = document.getElementById("theoryContent");
+    const tryItOutBtn = document.getElementById("tryItOutBtn");
+    const prevPageBtn = document.getElementById("prevPageBtn");
+    const nextPageBtn = document.getElementById("nextPageBtn");
+    const pageIndicator = document.getElementById("theoryPageIndicator");
+
+    const pages = this._theoryPages;
+    const idx = this._theoryPageIndex;
+    const isLast = idx === pages.length - 1;
+    const isFirst = idx === 0;
+    const multiPage = pages.length > 1;
+
+    if (theoryContent) {
+      const lessonTitle = `<h2 style="margin-bottom:1.25rem;font-size:1.4rem;color:#2d3748;">${lesson.title}</h2>`;
+      theoryContent.innerHTML = lessonTitle + pages[idx];
+    }
+
+    if (tryItOutBtn) {
+      if (isLast) {
+        tryItOutBtn.classList.remove("tutorial-hidden");
+      } else {
+        tryItOutBtn.classList.add("tutorial-hidden");
+      }
+    }
+
+    if (prevPageBtn) {
+      if (multiPage && !isFirst) {
+        prevPageBtn.classList.remove("tutorial-hidden");
+      } else {
+        prevPageBtn.classList.add("tutorial-hidden");
+      }
+    }
+
+    if (nextPageBtn) {
+      if (multiPage && !isLast) {
+        nextPageBtn.classList.remove("tutorial-hidden");
+      } else {
+        nextPageBtn.classList.add("tutorial-hidden");
+      }
+    }
+
+    if (pageIndicator) {
+      if (multiPage) {
+        pageIndicator.textContent = `${idx + 1} / ${pages.length}`;
+        pageIndicator.classList.remove("tutorial-hidden");
+      } else {
+        pageIndicator.classList.add("tutorial-hidden");
+      }
+    }
   }
 
   startInteractiveLesson() {

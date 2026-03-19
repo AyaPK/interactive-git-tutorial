@@ -71,7 +71,11 @@ function mdToHtml(md) {
       out.push(`<li>${renderInline(li[1].trim())}</li>`);
       continue;
     }
-    if (/^\s*$/.test(line)) {
+    if (/^===\s*$/.test(line)) {
+      flushP();
+      closeUl();
+      out.push('<hr class="theory-page-break">');
+    } else if (/^\s*$/.test(line)) {
       flushP();
       closeUl();
     } else {

@@ -1380,6 +1380,7 @@ body {
     font-size: 1rem;
     line-height: 1.75;
     color: var(--text-primary);
+    min-height: 350px;
 }
 
 .theory-content h3 {
@@ -1421,7 +1422,8 @@ body {
 
 .theory-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 2rem;
     padding-top: 1.25rem;
     border-top: 1px solid var(--theory-border);
@@ -1430,6 +1432,18 @@ body {
 .theory-try-btn {
     font-size: 1rem;
     padding: 0.65rem 1.75rem;
+}
+
+.theory-nav-btn {
+    font-size: 1rem;
+    padding: 0.65rem 1.5rem;
+}
+
+.theory-page-indicator {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    min-width: 3rem;
+    text-align: center;
 }
 
 /* ── Dark mode toggle ──────────────────────────────────────────────────────── */
