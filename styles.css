@@ -123,6 +123,70 @@ body {
     color: var(--text-secondary);
 }
 
+.construction-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #7c5c00;
+    color: #fef3c7;
+    font-size: 0.875rem;
+    padding: 0.55rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #a37a00;
+}
+
+.construction-banner.hidden {
+    display: none;
+}
+
+.construction-banner-icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+
+.construction-banner-text {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.construction-banner-text strong {
+    color: #fde68a;
+}
+
+.construction-banner-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: #fef3c7;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    opacity: 0.75;
+    line-height: 1;
+    transition: opacity 0.15s;
+}
+
+.construction-banner-close:hover {
+    opacity: 1;
+}
+
+[data-theme="dark"] .construction-banner {
+    background: #3d2e00;
+    border-bottom-color: #7c5c00;
+    color: #fde68a;
+}
+
+[data-theme="dark"] .construction-banner-text strong {
+    color: #fef3c7;
+}
+
+[data-theme="dark"] .construction-banner-close {
+    color: #fde68a;
+}
+
 .app-container {
     display: flex;
     flex-direction: column;

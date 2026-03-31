@@ -738,6 +738,9 @@ export class GitTutorial {
         pageIndicator.classList.add("tutorial-hidden");
       }
     }
+
+    const forwardBtn = isLast ? tryItOutBtn : (multiPage ? nextPageBtn : tryItOutBtn);
+    if (forwardBtn) forwardBtn.focus();
   }
 
   startInteractiveLesson() {
@@ -932,7 +935,11 @@ export class GitTutorial {
           modalBody.innerHTML = lesson?.furtherReadingHtml || '<p>Well done! You\'ve completed this lesson.</p>';
         }
         const modal = document.getElementById("postLessonModal");
-        if (modal) openModal(modal);
+        if (modal) {
+          openModal(modal);
+          const nextBtn = document.getElementById("postLessonNextBtn");
+          if (nextBtn) nextBtn.focus();
+        }
         return;
       }
 
