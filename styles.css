@@ -98,6 +98,18 @@ html {
     font-size: 95%;
 }
 
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -270,7 +282,7 @@ body {
 }
 
 .timeline-label {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.02em;
 }
@@ -408,7 +420,8 @@ body {
     gap: 1rem;
 }
 
-.lesson-nav h3 {
+.lesson-nav h3,
+.lesson-nav-heading {
     font-size: 1.125rem;
     margin-bottom: 1rem;
     color: var(--text-primary);
@@ -539,9 +552,12 @@ body {
     border-left: 4px solid #667eea;
 }
 
-.objectives h4 {
+.objectives h4,
+.objectives-heading {
     margin-bottom: 0.5rem;
     color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 .objectives ul {
@@ -662,7 +678,7 @@ body {
 }
 
 .terminal-line {
-    color: #0f0;
+    color: #4eff4e;
     margin-bottom: 0.25rem;
     white-space: pre-wrap;
     word-break: break-word;
@@ -675,14 +691,14 @@ body {
 }
 
 .prompt {
-    color: #0f0;
+    color: #4eff4e;
     font-weight: bold;
 }
 
 .terminal-input {
     background: transparent;
     border: none;
-    color: #0f0;
+    color: #4eff4e;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     outline: none;
@@ -697,9 +713,12 @@ body {
     box-shadow: 0 3px 17px rgba(0, 0, 0, 0.1);
 }
 
-.panel-header h3 {
+.panel-header h3,
+.panel-heading {
     color: var(--text-primary);
     margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .repo-notice {
@@ -749,7 +768,8 @@ body {
     border-top-color: #48bb78;
 }
 
-.git-state h4 {
+.git-state h4,
+.git-state h3 {
     font-size: 0.875rem;
     margin-bottom: 0.75rem;
     color: var(--text-primary);
@@ -858,7 +878,7 @@ body {
 .commit-hash {
     font-family: 'JetBrains Mono', monospace;
     color: var(--text-muted);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
 }
 
 .commit-message {
@@ -912,7 +932,8 @@ body {
     border-bottom: 1px solid var(--border);
 }
 
-.modal-header h3 {
+.modal-header h3,
+.modal-header h2 {
     color: var(--text-primary);
 }
 
@@ -934,7 +955,8 @@ body {
     padding: 1.5rem;
 }
 
-.reading-content h4 {
+.reading-content h4,
+.reading-content h3 {
     margin-bottom: 0.5rem;
     color: var(--text-primary);
 }
@@ -945,13 +967,34 @@ body {
     line-height: 1.55;
 }
 
-.reading-code code {
+.reading-code code,
+code.reading-code {
     background: var(--code-bg);
     border-radius: 4px;
     padding: 0.1em 0.4em;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.88em;
     color: var(--code-color);
+}
+
+.reading-code-list {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.reading-content ul:not(.reading-code-list) {
+    padding-left: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.reading-content li {
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 0.25rem;
 }
 .form-field {
     display: flex;
@@ -999,12 +1042,12 @@ body {
 }
 
 .primary-btn {
-    background: #667eea;
+    background: #4c63d2;
     color: white;
 }
 
 .primary-btn:hover {
-    background: #5a67d8;
+    background: #3d52b8;
 }
 
 .primary-btn.danger-btn {
@@ -1024,7 +1067,8 @@ body {
     background: var(--surface-hover2);
 }
 
-.command-help h4 {
+.command-help h4,
+.command-help h3 {
     margin-bottom: 1rem;
     color: var(--text-primary);
 }
@@ -1213,7 +1257,7 @@ body {
 
 .fs-status-badge {
     flex-shrink: 0;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.03em;
     border-radius: 3px;
@@ -1253,7 +1297,7 @@ body {
     justify-content: center;
     background: #ed8936;
     color: white;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 700;
     border-radius: 3px;
     padding: 0 4px;

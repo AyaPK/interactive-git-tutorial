@@ -85,7 +85,7 @@ export function applyReveals(subLesson) {
 
 export function updateVisualPanel(gitState) {
   const visualPanel = document.getElementById("visualPanel");
-  const panelTitle = visualPanel?.querySelector(".panel-header h3");
+  const panelTitle = visualPanel?.querySelector(".panel-header h2, .panel-header h3");
   const panelContent = visualPanel?.querySelector(".panel-content");
   let repoNotice = document.getElementById("repoNotice");
 
@@ -114,7 +114,7 @@ export function updateVisualPanel(gitState) {
   const stagedFiles = document.getElementById("stagedFiles");
   const commits = document.getElementById("commits");
   const remoteCommits = document.getElementById("remoteCommits");
-  const remoteHeader = visualPanel?.querySelector(".remote-repository h4");
+  const remoteHeader = visualPanel?.querySelector(".remote-repository h3, .remote-repository h4");
 
   const modified = Array.isArray(gitState.modifiedFiles) ? gitState.modifiedFiles : [];
   const allWorkingFiles = Array.from(new Set([...gitState.workingDirectory, ...modified]));

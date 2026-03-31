@@ -16,14 +16,14 @@
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
                 <span class="progress-text" id="progressText">Lesson 1 of 8</span>
-                <button class="dark-mode-toggle" id="darkModeToggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+                <button class="dark-mode-toggle" id="darkModeToggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode" aria-hidden="true" tabindex="-1">🌙</button>
             </div>
         </header>
 
         <main class="main-content">
-            <aside class="sidebar">
-                <div class="lesson-nav">
-                    <h3>Lessons</h3>
+            <aside class="sidebar" aria-label="Lesson navigation">
+                <nav class="lesson-nav" aria-label="Lessons">
+                    <h2 class="lesson-nav-heading">Lessons</h2>
                     <ul id="lessonList">
                         <li class="lesson-item active" data-lesson="1" id="lesson1">
                             <span class="lesson-number">1</span>
@@ -50,7 +50,7 @@
                             <span class="lesson-title">Local vs Remote</span>
                         </li>
                     </ul>
-                </div>
+                </nav>
             </aside>
 
             <div class="theory-screen tutorial-hidden" id="theoryScreen">
@@ -68,7 +68,7 @@
             <section class="tutorial-area">
                 <div class="lesson-content tutorial-hidden" id="lessonContent">
                     <div class="lesson-header">
-                        <h2 id="lessonTitle">Introduction to Git</h2>
+                        <h2 id="lessonTitle" aria-live="polite">Introduction to Git</h2>
                         <div class="lesson-actions">
                             <button class="secondary-action-btn tutorial-hidden" id="viewTheoryBtn" type="button">📖 Lesson Details</button>
                             <button class="secondary-action-btn" id="furtherReadingBtn" type="button">📘 Further reading</button>
@@ -79,7 +79,7 @@
                         <p>Loading lesson details.....</p>
                     </div>
                     <div class="objectives" id="objectives">
-                        <h4></h4>
+                        <h3 class="objectives-heading">Objectives</h3>
                         <ul>
 
                         </ul>
@@ -88,7 +88,7 @@
 
                 <div class="terminal-container tutorial-hidden" id="terminalContainer">
                     <div class="terminal-header">
-                        <div class="terminal-buttons">
+                        <div class="terminal-buttons" aria-hidden="true">
                             <span class="button close"></span>
                             <span class="button minimize"></span>
                             <span class="button maximize"></span>
@@ -97,23 +97,24 @@
                         <button class="terminal-undo-btn" id="undoBtn" type="button" disabled title="Undo last action">↩ Undo</button>
                     </div>
                     <div class="terminal-body">
-                        <div class="terminal-output" id="terminalOutput">
+                        <div class="terminal-output" id="terminalOutput" role="log" aria-live="polite" aria-label="Terminal output">
                             <div class="terminal-line"></div>
                         </div>
                         <div class="terminal-input-line">
-                            <span class="prompt">$</span>
-                            <input type="text" class="terminal-input" id="terminalInput" autofocus>
+                            <label for="terminalInput" class="visually-hidden">Terminal command input</label>
+                            <span class="prompt" aria-hidden="true">$</span>
+                            <input type="text" class="terminal-input" id="terminalInput" autofocus aria-label="Terminal command input">
                         </div>
                     </div>
                 </div>
                 <div class="notification-area tutorial-hidden" id="notificationArea"></div>
             </section>
 
-            <aside class="right-sidebar tutorial-hidden" id="rightSidebar">
+            <aside class="right-sidebar tutorial-hidden" id="rightSidebar" aria-label="Repository panels">
                 <div class="visual-panel" id="fileSystemPanel">
                     <div class="panel-header fs-panel-header">
-                        <h3>🗂 Local Files</h3>
-                        <button class="repo-action-btn" id="createFileBtn" type="button" title="Create file">+</button>
+                        <h2 class="panel-heading"><span aria-hidden="true">🗂</span> Local Files</h2>
+                        <button class="repo-action-btn" id="createFileBtn" type="button" title="Create file" aria-label="Create new file">+</button>
                     </div>
                     <div class="panel-content">
                         <div id="fileSystemList">
@@ -123,13 +124,13 @@
                 </div>
                 <div class="visual-panel" id="visualPanel">
                     <div class="panel-header">
-                        <h3>📊 Repository State</h3>
+                        <h2 class="panel-heading"><span aria-hidden="true">📊</span> Repository State</h2>
                     </div>
                     <div class="panel-content">
                         <div class="git-state" id="gitState">
                             <div class="working-directory">
                                 <div class="repo-section-header">
-                                    <h4>Working Directory</h4>
+                                    <h3>Working Directory</h3>
                                 </div>
                                 <div class="file-list" id="workingFiles">
                                     <div class="file-item">README.md</div>
@@ -137,19 +138,19 @@
                                 </div>
                             </div>
                             <div class="staging-area tutorial-hidden" id="stagingArea">
-                                <h4>Staging Area</h4>
+                                <h3>Staging Area</h3>
                                 <div class="file-list" id="stagedFiles">
                                     <div class="empty-state">No files staged</div>
                                 </div>
                             </div>
                             <div class="repository tutorial-hidden" id="repository">
-                                <h4>Local repository</h4>
+                                <h3>Local repository</h3>
                                 <div class="commit-list" id="commits">
                                     <div class="empty-state">No commits yet</div>
                                 </div>
                             </div>
                             <div class="remote-repository tutorial-hidden" id="remoteRepository">
-                                <h4>Remote: origin</h4>
+                                <h3>Remote: origin</h3>
                                 <div class="commit-list" id="remoteCommits">
                                     <div class="empty-state">No remote connected</div>
                                 </div>
@@ -171,15 +172,15 @@
             </div>
         </section> -->
 
-        <div class="help-modal" id="helpModal">
+        <div class="help-modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>💡 Command Help</h3>
-                    <button class="close-btn" id="closeHelp">&times;</button>
+                    <h2 id="helpModalTitle">Command Help</h2>
+                    <button class="close-btn" id="closeHelp" aria-label="Close command help">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="command-help">
-                        <h4>Basic Commands:</h4>
+                        <h3>Basic Commands:</h3>
                         <div class="command-list">
                             <div class="command-item">
                                 <code>git init</code>
@@ -219,11 +220,11 @@
             </div>
         </div>
 
-        <div class="help-modal" id="createFileModal">
+        <div class="help-modal" id="createFileModal" role="dialog" aria-modal="true" aria-labelledby="createFileModalTitle">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>New File</h3>
-                    <button class="close-btn" id="closeCreateFile">&times;</button>
+                    <h2 id="createFileModalTitle">New File</h2>
+                    <button class="close-btn" id="closeCreateFile" aria-label="Close new file dialog">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="form-field">
@@ -238,11 +239,11 @@
             </div>
         </div>
 
-        <div class="help-modal" id="renameFileModal">
+        <div class="help-modal" id="renameFileModal" role="dialog" aria-modal="true" aria-labelledby="renameFileModalTitle">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Rename File</h3>
-                    <button class="close-btn" id="closeRenameFile">&times;</button>
+                    <h2 id="renameFileModalTitle">Rename File</h2>
+                    <button class="close-btn" id="closeRenameFile" aria-label="Close rename file dialog">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="form-field">
@@ -261,11 +262,11 @@
             </div>
         </div>
 
-        <div class="help-modal" id="deleteFileModal">
+        <div class="help-modal" id="deleteFileModal" role="dialog" aria-modal="true" aria-labelledby="deleteFileModalTitle">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Delete File</h3>
-                    <button class="close-btn" id="closeDeleteFile">&times;</button>
+                    <h2 id="deleteFileModalTitle">Delete File</h2>
+                    <button class="close-btn" id="closeDeleteFile" aria-label="Close delete file dialog">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="form-field">
@@ -280,19 +281,20 @@
             </div>
         </div>
 
-        <div class="help-modal file-editor-modal" id="fileEditorModal">
+        <div class="help-modal file-editor-modal" id="fileEditorModal" role="dialog" aria-modal="true" aria-labelledby="fileEditorTitle">
             <div class="modal-content file-editor-content">
                 <div class="modal-header">
                     <div class="file-editor-header-left">
-                        <span class="file-editor-icon">📄</span>
-                        <h3 id="fileEditorTitle">file.txt</h3>
+                        <span class="file-editor-icon" aria-hidden="true">📄</span>
+                        <h2 id="fileEditorTitle">file.txt</h2>
                     </div>
                     <div class="file-editor-header-right">
                         <span class="file-editor-hint">Ctrl+S to save · Esc to close</span>
-                        <button class="close-btn" id="closeFileEditor">&times;</button>
+                        <button class="close-btn" id="closeFileEditor" aria-label="Close file editor">&times;</button>
                     </div>
                 </div>
                 <div class="modal-body file-editor-body">
+                    <label for="fileEditorTextarea" class="visually-hidden">File contents</label>
                     <textarea
                         class="file-editor-textarea"
                         id="fileEditorTextarea"
@@ -313,26 +315,30 @@
             </div>
         </div>
 
-        <div class="help-modal" id="furtherReadingModal">
+        <div class="help-modal" id="furtherReadingModal" role="dialog" aria-modal="true" aria-labelledby="furtherReadingModalTitle">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>📘 Further reading</h3>
-                    <button class="close-btn" id="closeFurtherReading">&times;</button>
+                    <h2 id="furtherReadingModalTitle">Further reading</h2>
+                    <button class="close-btn" id="closeFurtherReading" aria-label="Close further reading">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="reading-content">
-                        <h4>Create a repository on GitHub</h4>
+                        <h3>Create a repository on GitHub</h3>
                         <p>1. Go to GitHub and click <strong>New repository</strong>.</p>
                         <p>2. Choose a name and click <strong>Create repository</strong>.</p>
 
-                        <h4>Connect your local repo to GitHub</h4>
+                        <h3>Connect your local repo to GitHub</h3>
                         <p>From your project folder:</p>
-                        <div class="reading-code">git remote add origin https://github.com/&lt;you&gt;/&lt;repo&gt;.git</div>
-                        <div class="reading-code">git push -u origin main</div>
+                        <ul class="reading-code-list">
+                            <li><code class="reading-code">git remote add origin https://github.com/&lt;you&gt;/&lt;repo&gt;.git</code></li>
+                            <li><code class="reading-code">git push -u origin main</code></li>
+                        </ul>
 
-                        <h4>Common notes</h4>
-                        <p>- The name <code>origin</code> is just a convention for the default remote.</p>
-                        <p>- You may need to sign in / set up SSH keys or a token depending on your GitHub settings.</p>
+                        <h3>Common notes</h3>
+                        <ul>
+                            <li>The name <code>origin</code> is just a convention for the default remote.</li>
+                            <li>You may need to sign in / set up SSH keys or a token depending on your GitHub settings.</li>
+                        </ul>
                     </div>
                     <div class="modal-actions">
                         <button class="primary-btn" id="closeFurtherReadingBottom" type="button">Got it</button>
@@ -342,11 +348,11 @@
         </div>
     </div>
 
-        <div class="help-modal" id="postLessonModal">
+        <div class="help-modal" id="postLessonModal" role="dialog" aria-modal="true" aria-labelledby="postLessonModalTitle">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>🎉 Lesson Complete!</h3>
-                    <button class="close-btn" id="closePostLessonModal">&times;</button>
+                    <h2 id="postLessonModalTitle">Lesson Complete!</h2>
+                    <button class="close-btn" id="closePostLessonModal" aria-label="Close lesson complete dialog">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="reading-content" id="postLessonModalBody">

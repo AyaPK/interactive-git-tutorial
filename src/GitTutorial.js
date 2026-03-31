@@ -12,6 +12,25 @@ import {
   updateVisualPanel
 } from "./ui.js";
 
+function openModal(modal, triggerEl) {
+  if (!modal) return;
+  modal.classList.add("active");
+  modal._triggerEl = triggerEl || document.activeElement;
+  const focusable = modal.querySelectorAll(
+    'button, [href], input:not([type=hidden]), select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  if (focusable.length) focusable[0].focus();
+}
+
+function closeModal(modal) {
+  if (!modal) return;
+  modal.classList.remove("active");
+  if (modal._triggerEl && typeof modal._triggerEl.focus === "function") {
+    modal._triggerEl.focus();
+    modal._triggerEl = null;
+  }
+}
+
 function tokenize(input) {
   const tokens = [];
   const regex = /"([^"]*)"|'([^']*)'|[^\s]+/g;
@@ -80,8 +99,7 @@ export class GitTutorial {
     titleEl.textContent = name;
     textarea.value = content;
     modal.dataset.file = name;
-    modal.classList.add("active");
-    textarea.focus();
+    openModal(modal);
   }
 
   _saveEditorModal() {
@@ -234,9 +252,7 @@ export class GitTutorial {
       undoBtn.addEventListener("click", () => this.undo());
     }
 
-    const dismissPostLessonModal = () => {
-      if (postLessonModal) postLessonModal.classList.remove("active");
-    };
+    const dismissPostLessonModal = () => closeModal(postLessonModal);
 
     if (closePostLessonModal) {
       closePostLessonModal.addEventListener("click", dismissPostLessonModal);
@@ -245,6 +261,9 @@ export class GitTutorial {
     if (postLessonModal) {
       postLessonModal.addEventListener("click", (e) => {
         if (e.target === postLessonModal) dismissPostLessonModal();
+      });
+      postLessonModal.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") dismissPostLessonModal();
       });
     }
 
@@ -281,45 +300,43 @@ export class GitTutorial {
     });
 
     helpBtn.addEventListener("click", () => {
-      helpModal.classList.add("active");
+      openModal(helpModal, helpBtn);
     });
 
     closeHelp.addEventListener("click", () => {
-      helpModal.classList.remove("active");
+      closeModal(helpModal);
     });
 
     helpModal.addEventListener("click", (e) => {
-      if (e.target === helpModal) {
-        helpModal.classList.remove("active");
-      }
+      if (e.target === helpModal) closeModal(helpModal);
+    });
+
+    helpModal.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal(helpModal);
     });
 
     if (furtherReadingBtn && furtherReadingModal) {
       furtherReadingBtn.addEventListener("click", () => {
-        furtherReadingModal.classList.add("active");
+        openModal(furtherReadingModal, furtherReadingBtn);
       });
     }
 
-    const closeFurtherReadingModal = () => {
-      if (!furtherReadingModal) return;
-      furtherReadingModal.classList.remove("active");
-    };
+    const closeFurtherReadingModal = () => closeModal(furtherReadingModal);
 
     if (closeFurtherReading) {
       closeFurtherReading.addEventListener("click", closeFurtherReadingModal);
     }
 
     if (closeFurtherReadingBottom) {
-      closeFurtherReadingBottom.addEventListener("click", () => {
-        if (furtherReadingModal) furtherReadingModal.classList.remove("active");
-      });
+      closeFurtherReadingBottom.addEventListener("click", closeFurtherReadingModal);
     }
 
     if (furtherReadingModal) {
       furtherReadingModal.addEventListener("click", (e) => {
-        if (e.target === furtherReadingModal) {
-          closeFurtherReadingModal();
-        }
+        if (e.target === furtherReadingModal) closeFurtherReadingModal();
+      });
+      furtherReadingModal.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeFurtherReadingModal();
       });
     }
 
@@ -359,23 +376,17 @@ export class GitTutorial {
 
     const openCreateFileModal = () => {
       if (!createFileModal) return;
-      createFileModal.classList.add("active");
-      if (createFileName) {
-        createFileName.value = "";
-        createFileName.focus();
-      }
+      if (createFileName) createFileName.value = "";
+      openModal(createFileModal, createFileBtn);
     };
 
     const openDeleteFileModal = (file) => {
       if (!deleteFileModal || !deleteFileName) return;
       deleteFileName.value = file;
-      deleteFileModal.classList.add("active");
+      openModal(deleteFileModal);
     };
 
-    const closeDeleteFileModal = () => {
-      if (!deleteFileModal) return;
-      deleteFileModal.classList.remove("active");
-    };
+    const closeDeleteFileModal = () => closeModal(deleteFileModal);
 
     const submitDeleteFile = () => {
       if (!deleteFileName) return;
@@ -396,14 +407,10 @@ export class GitTutorial {
       if (!renameFileModal || !renameFileOld || !renameFileNew) return;
       renameFileOld.value = oldName;
       renameFileNew.value = "";
-      renameFileModal.classList.add("active");
-      renameFileNew.focus();
+      openModal(renameFileModal);
     };
 
-    const closeRenameFileModal = () => {
-      if (!renameFileModal) return;
-      renameFileModal.classList.remove("active");
-    };
+    const closeRenameFileModal = () => closeModal(renameFileModal);
 
     const submitRenameFile = () => {
       if (!renameFileOld || !renameFileNew) return;
@@ -421,10 +428,7 @@ export class GitTutorial {
       this.checkLessonProgress(cmd, result.output);
     };
 
-    const closeCreateFileModal = () => {
-      if (!createFileModal) return;
-      createFileModal.classList.remove("active");
-    };
+    const closeCreateFileModal = () => closeModal(createFileModal);
 
     const submitCreateFile = () => {
       if (!createFileName) return;
@@ -480,9 +484,10 @@ export class GitTutorial {
 
     if (createFileModal) {
       createFileModal.addEventListener("click", (e) => {
-        if (e.target === createFileModal) {
-          closeCreateFileModal();
-        }
+        if (e.target === createFileModal) closeCreateFileModal();
+      });
+      createFileModal.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeCreateFileModal();
       });
     }
 
@@ -512,9 +517,7 @@ export class GitTutorial {
     const saveFileEditor = document.getElementById("saveFileEditor");
     const fileEditorTextarea = document.getElementById("fileEditorTextarea");
 
-    const closeEditorModal = () => {
-      if (fileEditorModal) fileEditorModal.classList.remove("active");
-    };
+    const closeEditorModal = () => closeModal(fileEditorModal);
 
     if (closeFileEditor) {
       closeFileEditor.addEventListener("click", closeEditorModal);
@@ -533,6 +536,9 @@ export class GitTutorial {
     if (fileEditorModal) {
       fileEditorModal.addEventListener("click", (e) => {
         if (e.target === fileEditorModal) closeEditorModal();
+      });
+      fileEditorModal.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && document.activeElement !== fileEditorTextarea) closeEditorModal();
       });
     }
 
@@ -570,9 +576,10 @@ export class GitTutorial {
 
     if (renameFileModal) {
       renameFileModal.addEventListener("click", (e) => {
-        if (e.target === renameFileModal) {
-          closeRenameFileModal();
-        }
+        if (e.target === renameFileModal) closeRenameFileModal();
+      });
+      renameFileModal.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeRenameFileModal();
       });
     }
 
@@ -590,9 +597,10 @@ export class GitTutorial {
 
     if (deleteFileModal) {
       deleteFileModal.addEventListener("click", (e) => {
-        if (e.target === deleteFileModal) {
-          closeDeleteFileModal();
-        }
+        if (e.target === deleteFileModal) closeDeleteFileModal();
+      });
+      deleteFileModal.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeDeleteFileModal();
       });
     }
   }
@@ -924,7 +932,7 @@ export class GitTutorial {
           modalBody.innerHTML = lesson?.furtherReadingHtml || '<p>Well done! You\'ve completed this lesson.</p>';
         }
         const modal = document.getElementById("postLessonModal");
-        if (modal) modal.classList.add("active");
+        if (modal) openModal(modal);
         return;
       }
 
