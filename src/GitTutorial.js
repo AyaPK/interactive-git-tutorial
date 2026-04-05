@@ -771,10 +771,10 @@ export class GitTutorial {
     if (tutorialArea) tutorialArea.classList.remove("tutorial-hidden");
 
     const lessonTitle = document.getElementById("lessonTitle");
-    if (lessonTitle) lessonTitle.textContent = "Sandbox";
+    if (lessonTitle) lessonTitle.textContent = "Experiment freely!";
 
     const lessonDescription = document.getElementById("lessonDescription");
-    if (lessonDescription) lessonDescription.innerHTML = "<p>No objectives — just explore. Use any Git commands you've learned and experiment freely.</p>";
+    if (lessonDescription) lessonDescription.innerHTML = "<p>No objectives! Just explore. Use any Git commands you've learned and experiment freely.</p>";
 
     const objectives = document.getElementById("objectives");
     if (objectives) objectives.style.display = "none";
