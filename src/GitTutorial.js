@@ -252,6 +252,25 @@ export class GitTutorial {
       undoBtn.addEventListener("click", () => this.undo());
     }
 
+    const completionRestartBtn = document.getElementById("completionRestartBtn");
+    if (completionRestartBtn) {
+      completionRestartBtn.addEventListener("click", () => {
+        const screen = document.getElementById("completionScreen");
+        if (screen) screen.classList.remove("active");
+        this.sandboxMode = false;
+        this.loadLesson(1, 0);
+      });
+    }
+
+    const completionSandboxBtn = document.getElementById("completionSandboxBtn");
+    if (completionSandboxBtn) {
+      completionSandboxBtn.addEventListener("click", () => {
+        const screen = document.getElementById("completionScreen");
+        if (screen) screen.classList.remove("active");
+        this.startSandbox();
+      });
+    }
+
     const dismissPostLessonModal = () => closeModal(postLessonModal);
 
     if (closePostLessonModal) {
@@ -743,6 +762,38 @@ export class GitTutorial {
     if (forwardBtn) forwardBtn.focus();
   }
 
+  startSandbox() {
+    this.sandboxMode = true;
+
+    const theoryScreen = document.getElementById("theoryScreen");
+    const tutorialArea = document.querySelector(".tutorial-area");
+    if (theoryScreen) theoryScreen.classList.add("tutorial-hidden");
+    if (tutorialArea) tutorialArea.classList.remove("tutorial-hidden");
+
+    const lessonTitle = document.getElementById("lessonTitle");
+    if (lessonTitle) lessonTitle.textContent = "Sandbox";
+
+    const lessonDescription = document.getElementById("lessonDescription");
+    if (lessonDescription) lessonDescription.innerHTML = "<p>No objectives — just explore. Use any Git commands you've learned and experiment freely.</p>";
+
+    const objectives = document.getElementById("objectives");
+    if (objectives) objectives.style.display = "none";
+
+    const vtBtn = document.getElementById("viewTheoryBtn");
+    if (vtBtn) vtBtn.classList.add("tutorial-hidden");
+
+    const frBtn = document.getElementById("furtherReadingBtn");
+    if (frBtn) frBtn.classList.add("tutorial-hidden");
+
+    clearNotifications();
+    clearTerminal();
+    addTerminalOutput("Sandbox mode — all commands available, no objectives. Have fun!", "success");
+    updateVisualPanel(this.gitState);
+
+    const termInput = document.getElementById("terminalInput");
+    if (termInput) termInput.focus();
+  }
+
   startInteractiveLesson() {
     const theoryScreen = document.getElementById("theoryScreen");
     const tutorialArea = document.querySelector(".tutorial-area");
@@ -895,6 +946,7 @@ export class GitTutorial {
   }
 
   checkLessonProgress(command, output) {
+    if (this.sandboxMode) return;
     const lesson = this.getLesson(this.currentLesson);
     const subLesson = this.getSubLesson(this.currentLesson, this.currentSubLessonIndex);
     const objectiveStates = this.getObjectiveStates(this.currentLesson, this.currentSubLessonIndex);
@@ -944,8 +996,80 @@ export class GitTutorial {
       }
 
       this._markLessonComplete(this.currentLesson);
-      showNotification("🎊 Congratulations! You've completed all lessons!", "complete");
+      this._showCompletionScreen();
     }, 600);
+  }
+
+  _showCompletionScreen() {
+    const screen = document.getElementById("completionScreen");
+    if (!screen) return;
+
+    const statsEl = document.getElementById("completionStats");
+    if (statsEl) {
+      const completedCount = this._loadCompletedLessons().size;
+      const totalSteps = this.getTotalSubLessonCount();
+      statsEl.innerHTML = `
+        <div class="completion-stat">
+          <span class="completion-stat-value">${completedCount}</span>
+          <span class="completion-stat-label">Lessons</span>
+        </div>
+        <div class="completion-stat">
+          <span class="completion-stat-value">${totalSteps}</span>
+          <span class="completion-stat-label">Steps</span>
+        </div>`;
+    }
+
+    screen.classList.add("active");
+    const restartBtn = document.getElementById("completionRestartBtn");
+    if (restartBtn) restartBtn.focus();
+    this._launchConfetti();
+  }
+
+  _launchConfetti() {
+    const canvas = document.getElementById("confettiCanvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const COLORS = ["#4c63d2", "#f6ad55", "#68d391", "#fc8181", "#76e4f7", "#b794f4", "#faf089"];
+    const pieces = Array.from({ length: 120 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      w: 8 + Math.random() * 8,
+      h: 5 + Math.random() * 5,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      rot: Math.random() * Math.PI * 2,
+      vx: (Math.random() - 0.5) * 2,
+      vy: 2.5 + Math.random() * 3,
+      vrot: (Math.random() - 0.5) * 0.15,
+    }));
+
+    let raf;
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      for (const p of pieces) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vrot;
+        if (p.y < canvas.height + 20) alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+      if (alive) raf = requestAnimationFrame(draw);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+    raf = requestAnimationFrame(draw);
+
+    setTimeout(() => {
+      cancelAnimationFrame(raf);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }, 6000);
   }
 
   _loadCompletedLessons() {
